@@ -4,15 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Debug",
+            "label": "echo",
             "type": "shell",
-            "command": "g++ -g -o assembly.exe src/main.cpp",
-            "group":"test" 
-        },
-        {
-            "label": "Build",
-            "type": "shell",
-            "command": "g++ -o assembly.exe src/main.cpp",
+            "command": "g++ -g src/main.cpp",
             "group": {
                 "kind": "build",
                 "isDefault": true

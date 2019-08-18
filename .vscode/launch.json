@@ -15,7 +15,7 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "/usr/bin/gdb",
+            "miDebuggerPath": "C:\\MinGW\\bin",
             "preLaunchTask": "Debug",
             "setupCommands": [
                 {
