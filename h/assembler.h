@@ -7,11 +7,11 @@
 class Assembler {
     public:
     
-    static bool firstPass(std::vector<std::vector<std::string>> &instructions);
+    static bool firstPass(ArrayOfStrings &instructions);
 
     public:
 
-    static bool secoundPass(std::vector<std::vector<std::string>> &instruction);
+    static bool secoundPass(ArrayOfStrings &instruction);
 };
 
 #endif
