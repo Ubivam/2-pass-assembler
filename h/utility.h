@@ -6,12 +6,14 @@
 #include <memory>
 #include "../h/macros.h"
 
-class Utility{
-    public:
-        static bool readFile(std::string fileName, ArrayOfStrings &instructions);
-        static void writeFile(std::string fileName);
-    public:
-        //Prenosimo po referenci liniju i delimetre preko kojih hvatamo tokene
-        static std::vector<std::string> tokenizeString(const std::string& str, const std::string& delimetars);
-}
+class Utility
+{
+public:
+    static bool readFile(std::string fileName, ArrayOfStrings &instructions);
+    static void writeFile(std::string fileName);
+
+public:
+    //Prenosimo po referenci liniju i delimetre preko kojih hvatamo tokene
+    static std::vector<std::string> tokenizeString(const std::string &str, const std::string &delimetars);
+};
 #endif

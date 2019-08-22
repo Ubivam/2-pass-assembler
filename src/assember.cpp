@@ -5,10 +5,15 @@
 #include "../h/assembler.h"
 #include "../h/utility.h"
 #include "../h/selection.h"
+#include "../h/symbolTable.h"
 
-bool Assembler::firstPass(ArrayOfStrings &instructions){
+bool Assembler::firstPass(ArrayOfStrings &instructions)
+{
+    
+}
 
-     auto currentSelection = std::shared_ptr<Selection>();
-
-
+Assembler::Assembler()
+{
+    selection = std::shared_ptr<Selection>();
+    symbolTable = std::shared_ptr<SymbolTable>();
 }
