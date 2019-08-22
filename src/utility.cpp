@@ -3,8 +3,6 @@
 #include "../h/macros.h"
 #include "../h/utility.h"
 #include "../h/assembler.h"
-#include "../h/symbolTable.h"
-#include "../h/selectionTable.h"
 
 bool Utility::readFile(std::string fileName, ArrayOfStrings &instructions)
 {
