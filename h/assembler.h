@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <regex>
-#include "../h/symbolTable.h"
 #include "../h/selection.h"
 
 class Assembler

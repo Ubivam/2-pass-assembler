@@ -5,8 +5,15 @@
 
 class Symbol;
 class Section;
+class Literal;
+class RelocationEntry;
+class Mnemonic;
+
+typedef Table<Mnemonic> OperationTable;
 typedef Table<Symbol> SymbolTable;
 typedef Table<Section> SectionTable;
+typedef Table<Literal> LiteralTable;
+typedef Table<RelocationEntry> RelocationTable;
 typedef std::vector<std::vector<std::string>> ArrayOfStrings;
 
-#elif
+#endif

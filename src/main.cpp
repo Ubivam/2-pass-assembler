@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
                 return -1;
         }
         ArrayOfStrings instructions;
+        auto assembler = std::shared_ptr<Assembler>();
 
         if (!Utility::readFile(argv[1], instructions))
         {
@@ -19,12 +20,12 @@ int main(int argc, char *argv[])
                 return -1;
         }
         //TODO: Operation Table initialize
-        if (!Assembler::firstPass(instructions))
+        if (assembler->firstPass(instructions))
         {
                 PRINT("There was an error with first Pass");
                 return -1;
         }
-        if (!Assembler::secoundPass(instructions))
+        if (assembler->secoundPass(instructions))
         {
                 PRINT("There was an error with secound Pass");
                 return -1;

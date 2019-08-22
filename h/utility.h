@@ -5,7 +5,7 @@
 #include <vector>
 #include <memory>
 #include "../h/macros.h"
-
+#include "../h/macros.h"
 class Utility
 {
 public:
@@ -15,5 +15,7 @@ public:
 public:
     //Prenosimo po referenci liniju i delimetre preko kojih hvatamo tokene
     static std::vector<std::string> tokenizeString(const std::string &str, const std::string &delimetars);
+    static SectionTable secTable;
+    static SymbolTable symbTable;
 };
 #endif

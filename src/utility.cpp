@@ -1,5 +1,7 @@
 
 #include <vector>
+#include <fstream>
+
 #include "../h/macros.h"
 #include "../h/utility.h"
 #include "../h/assembler.h"
@@ -7,14 +9,14 @@
 bool Utility::readFile(std::string fileName, ArrayOfStrings &instructions)
 {
 
-    std::ifstream input;
-    input.open(fileName);
+    std::ifstream infile;
+    infile.open(fileName);
     std::string delimetars = " , \t";
     std::string line;
 
-    while (std::getline(input, line))
+    while (std::getline(infile, line))
     {
-        auto tokens = Utility.tokenizeString(line, delimetars);
+        auto tokens = Utility::tokenizeString(line, delimetars);
         if (tokens.empty())
             continue;
         instructions.push_back(tokens);
@@ -40,7 +42,7 @@ std::vector<std::string> Utility::tokenizeString(const std::string &line, const 
     // std::string::npos means unitl the end of the string
     while (std::string::npos != pos || std::string::npos != lastPos)
     {
-        std::string subSt = subSt.substr(latest, pos - lastPos);
+        std::string subSt = subSt.substr(lastPos, pos - lastPos);
         if (subSt.find(";") != std::string::npos)
             return tokens;
         if (subSt.find("[") != std::string::npos)
@@ -57,21 +59,21 @@ std::vector<std::string> Utility::tokenizeString(const std::string &line, const 
     }
     return tokens;
 }
-
+/**
 void Utility::writeFile(std::string fileName)
 {
     std::ofstream outFile(fileName);
 
     std::string output = "#TableOfSymbols\n";
-    output += SelectionTable::table.to_string();
+    output += Utility::secTable.to_string();
 
-    for (auto &symbol : SelectionTable::table)
+    for (auto symbol : Utility::symbTable)
     {
-        if(!symbol->isSection()){
-            output += symbol->to_string() +"\n";
+        if(!symbol.isSection()){
+            output += symbol.to_string() +"\n";
         }
     }
-    for(auto &section: SectionTable::table){
+    for(auto &section: Utility::secTable){
         auto table = section->getTable();
         if(table.size()){
             output+="#rel" + section->getName()+"\n";
@@ -84,4 +86,4 @@ void Utility::writeFile(std::string fileName)
     }
     outFile << output;
     outFile.close();
-}
+}**/
