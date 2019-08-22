@@ -3,15 +3,25 @@
 
 #include <vector>
 #include <regex>
+#include "../h/symbolTable.h"
+#include "../h/selection.h"
 
-class Assembler {
-    public:
-    
-    static bool firstPass(ArrayOfStrings &instructions);
+class Assembler
+{
+private:
+    std::shared_ptr<SymbolTable> symbolTable;
+    std::shared_ptr<Selection> selection;
+    bool end = false;
 
-    public:
+public:
+    Assembler();
+    //Analysis Phase
+    bool firstPass(ArrayOfStrings &instructions);
+    void analizeUndefined();
 
-    static bool secoundPass(ArrayOfStrings &instruction);
+public:
+    //Synthesis Phase
+    bool secoundPass(ArrayOfStrings &instruction);
 };
 
 #endif

@@ -2,6 +2,8 @@
 #include "../h/macros.h"
 #include "../h/utility.h"
 #include "../h/assembler.h"
+#include "../h/symbolTable.h"
+#include "../h/selectionTable.h"
 
 bool Utility::readFile(std::string fileName, ArrayOfStrings &instructions)
 {
@@ -39,7 +41,48 @@ std::vector<std::string> Utility::tokenizeString(const std::string &line, const 
     // std::string::npos means unitl the end of the string
     while (std::string::npos != pos || std::string::npos != lastPos)
     {
-        std::string subSt= subSt.substr(latest, pos - lastPos);
-        if(subSt.find())
+        std::string subSt = subSt.substr(latest, pos - lastPos);
+        if (subSt.find(";") != std::string::npos)
+            return tokens;
+        if (subSt.find("[") != std::string::npos)
+        {
+            auto first = line.find_first_of("[");
+            auto last = line.find_last_of("]");
+            tokens.push_back(line.substr(first, last - first + 1));
+            return tokens;
+        }
+        tokens.push_back(line.substr(lastPos, pos - lastPos));
+
+        lastPos = line.find_first_not_of(delimetar, pos);
+        pos = line.find_first_of(delimetar, lastPos);
     }
+    return tokens;
+}
+
+void Utility::writeFile(std::string fileName)
+{
+    std::ofstream outFile(fileName);
+
+    std::string output = "#TableOfSymbols\n";
+    output += SelectionTable::table.to_string();
+
+    for (auto &symbol : SelectionTable::table)
+    {
+        if(!symbol->isSection()){
+            output += symbol->to_string() +"\n";
+        }
+    }
+    for(auto &section: SectionTable::table){
+        auto table = section->getTable();
+        if(table.size()){
+            output+="#rel" + section->getName()+"\n";
+        } 
+        for(auto &entry:section->getTable())
+        {
+            output+= entry->to_string() +"\n";
+        }
+        output += section->to_string_data()+"\n";
+    }
+    outFile << output;
+    outFile.close();
 }

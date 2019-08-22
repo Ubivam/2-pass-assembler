@@ -1,6 +1,7 @@
 #include "../h/utility.h"
 #include "../h/assembler.h"
 #include "../h/macros.h"
+#include "../h/table.h"
 #include <fstream>
 
 int main(int argc, char *argv[])
