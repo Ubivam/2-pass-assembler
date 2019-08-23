@@ -7,7 +7,7 @@
 class Section
 {
 public:
-    Selection(std::string name, uint32_t index,uint32_t locctr = 0, bool org = false);
+    Section(std::string name, uint32_t index, uint32_t locctr = 0);
 
     void incLocationCounter(uint32_t amount);
 
@@ -15,10 +15,23 @@ public:
 
     void appendData(uint32_t value, uint8_t size, bool firstWord=true);
 
+    void saveAndResetLocCounter(std::shared_ptr<RelocationEntry> &entry);
+
 public:
+    std::string getName() const;
+    uint32_t getLocationCounter() const;
+    uint32_t getBeginLocationCounter() const;
+    std::vector<uint8_t> getData() const;
+    uint32_t getIndex() const;
+    RelocationTable& getTable() const;
+
+    std::string to_string() const;
+    std::string to_string_data() const;
+    std::string to_string_table() const;
+
 
 private:
-    std::_stringName;
+    std::string _stringName;
     uint32_t _beginLocCounter;
     uint32_t _locCounter;
     uint32_t _endLocCouter;

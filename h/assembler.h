@@ -3,13 +3,15 @@
 
 #include <vector>
 #include <regex>
-#include "../h/selection.h"
+#include "../h/section.h"
+#include "../h/symbol.h"
 
 class Assembler
 {
 private:
+    std::shared_ptr<Section> currentSection;
     std::shared_ptr<SymbolTable> symbolTable;
-    std::shared_ptr<Selection> selection;
+    std::shared_ptr<SectionTable> sectionTable;
     bool end = false;
 
 public:
