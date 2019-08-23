@@ -9,9 +9,11 @@
 class Assembler
 {
 private:
-    std::shared_ptr<Section> currentSection;
-    std::shared_ptr<SymbolTable> symbolTable;
-    std::shared_ptr<SectionTable> sectionTable;
+    std::shared_ptr<Section> _currentSection;
+    std::shared_ptr<SymbolTable> _symbolTable;
+    std::shared_ptr<SectionTable> _sectionTable;
+    bool _globalFlag;
+    bool _externFlag;
     bool end = false;
 
 public:

@@ -2,6 +2,7 @@
 #include "../h/assembler.h"
 #include "../h/macros.h"
 #include "../h/table.h"
+#include "../h/operational_code_table.h"
 #include <fstream>
 
 int main(int argc, char *argv[])
@@ -13,13 +14,12 @@ int main(int argc, char *argv[])
         }
         ArrayOfStrings instructions;
         auto assembler = std::shared_ptr<Assembler>();
-
+        OperationalCodeTabele::init();
         if (!Utility::readFile(argv[1], instructions))
         {
                 PRINT("There was an error in readingFile");
                 return -1;
         }
-        //TODO: Operation Table initialize
         if (assembler->firstPass(instructions))
         {
                 PRINT("There was an error with first Pass");
