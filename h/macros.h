@@ -13,6 +13,6 @@
 #define REGIND 0x2
 #define REGINDPOM8 0x3
 #define REGINDPOM16 0x4
-#define MEM 0x5
+#define MEMDIR 0x5
 
 #endif

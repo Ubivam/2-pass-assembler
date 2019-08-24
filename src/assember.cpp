@@ -6,7 +6,7 @@
 #include "../h/assembler.h"
 #include "../h/utility.h"
 #include "../h/section.h"
-#include "../h/operational_code_tabele.h"
+#include "../h/operational_code_table.h"
 bool Assembler::firstPass(ArrayOfStrings &instructions)
 {
     _currentSection = std::shared_ptr<Section>(nullptr);
@@ -91,9 +91,9 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
                 break;
             }
             //Is it instruction
-            if (OperationalCodeTabele::find(word))
+            if (OperationalCodeTable::find(word))
             {
-                auto bytes = OperationalCodeTabele::checkInstruction(word, line);
+                auto bytes = OperationalCodeTable::checkInstruction(word, line);
                 if (word == "RET")
                     bytes = 4;
                 if (bytes == -1)

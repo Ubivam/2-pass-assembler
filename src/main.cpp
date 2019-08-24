@@ -12,9 +12,11 @@ int main(int argc, char *argv[])
                 PRINT("You entered wrong arguments");
                 return -1;
         }
+        //Initialization Block
+
         ArrayOfStrings instructions;
         auto assembler = std::shared_ptr<Assembler>();
-        OperationalCodeTabele::init();
+        OperationalCodeTable::init();
         if (!Utility::readFile(argv[1], instructions))
         {
                 PRINT("There was an error in readingFile");

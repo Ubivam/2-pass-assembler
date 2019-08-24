@@ -6,6 +6,9 @@
 #include "../h/utility.h"
 #include "../h/assembler.h"
 
+SectionTable Utility::secTable;
+SymbolTable Utility::symbTable;
+
 bool Utility::readFile(std::string fileName, ArrayOfStrings &instructions)
 {
 
@@ -59,7 +62,7 @@ std::vector<std::string> Utility::tokenizeString(const std::string &line, const 
     }
     return tokens;
 }
-/**
+
 void Utility::writeFile(std::string fileName)
 {
     std::ofstream outFile(fileName);
@@ -69,21 +72,27 @@ void Utility::writeFile(std::string fileName)
 
     for (auto symbol : Utility::symbTable)
     {
-        if(!symbol.isSection()){
-            output += symbol.to_string() +"\n";
+        if(!symbol->isSection()){
+            output += symbol->to_string() +"\n";
         }
     }
-    for(auto &section: Utility::secTable){
+    /**for(auto &section: Utility::secTable){
         auto table = section->getTable();
         if(table.size()){
             output+="#rel" + section->getName()+"\n";
         } 
         for(auto &entry:section->getTable())
         {
-            output+= entry->to_string() +"\n";
+            output+= entry.to_string() +"\n";
         }
         output += section->to_string_data()+"\n";
-    }
+    }**/
     outFile << output;
     outFile.close();
-}**/
+}
+
+std::regex Utility::register_regex("^(R([0-9]||1[0-5])||SP||PC)$");
+std::regex Utility::regindpom_regex("^\\[(R([0-9]||1[0-5])||PC||SP) *(\\+||\\-) *(0x||0b)?[a-zA-z0-9]+\\]$");
+std::regex Utility::regind_regex("^\\[(R([0-9]||1[0-5])||PC||SP)\\]$");
+std::regex Utility::immed_regex("^#([0-9A-F]+||[a-zA-z][a-zA-Z0-9]*)");
+std::regex Utility::memdir_regex("^\\$?[a-zA-Z][a-zA-Z0-9]*$");

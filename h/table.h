@@ -35,11 +35,11 @@ public:
     }
     std::shared_ptr<T> *end()
     {
-        return std::shared_ptr<T> (&_table[size() - 1]);
+        return &_table[size() - 1];
     }
     const std::shared_ptr<T> *end() const
     {
-        return std::shared_ptr<T> (&_table[size()-1]);
+        return  &_table[size()-1];
     }
     std::size_t
         size() const

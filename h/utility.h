@@ -17,5 +17,13 @@ public:
     static std::vector<std::string> tokenizeString(const std::string &str, const std::string &delimetars);
     static SectionTable secTable;
     static SymbolTable symbTable;
+
+public:
+    //Regex for types of adressing
+    static std::regex register_regex;
+    static std::regex regindpom_regex;
+    static std::regex regind_regex;
+    static std::regex immed_regex;
+    static std::regex memdir_regex;
 };
 #endif
