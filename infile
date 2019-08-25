@@ -1,6 +1,6 @@
-.section .text
-	.long l+3
-k:	.long l+1, k+2 
-.section .bss
-l:	skip 5
-.end
+.global b,k
+.text
+a:
+add r1,r2
+   jmp 20
+   jmp *20

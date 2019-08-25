@@ -10,18 +10,6 @@ Section::Section(std::string name, uint32_t index, uint32_t locCounter)
       _endLocCouter(locCounter),
       _locCounter(locCounter)
 {
-    if (name.find("text") != std::string::npos)
-    {
-        _flags = "XPA";
-    }
-    if (name.find("data") != std::string::npos)
-    {
-        _flags = "WPA";
-    }
-    if (name.find("bss") != std::string::npos)
-    {
-        _flags = "WA";
-    }
 }
 void Section::incLocationCounter(uint32_t amount)
 {
@@ -53,13 +41,6 @@ void Section::appendData(uint32_t value, uint8_t size, bool firstWord)
     }
     _locCounter += size;
 }
-void Section::saveAndResetLocCounter(std::shared_ptr<RelocationEntry> &entry)
-{
-    //TODO: Vidi ovo sta kako
-    _endLocCouter = _locCounter;
-    _locCounter = _beginLocCounter;
-}
-
 std::string Section::getName() const
 {
     return _stringName;
@@ -92,5 +73,5 @@ std::string Section::to_string() const
     stream << "0x" << std::uppercase << std::hex << _endLocCouter - _beginLocCounter;
     auto end = stream.str();
 
-    return "SEG" + std::to_string(_index) + " " + _stringName + " " + std::to_string(_index) + " " + begin + " " + end + " " + _flags;
+    return "SEG" + std::to_string(_index) + " " + _stringName + " " + std::to_string(_index) + " " + begin + " " + end;
 }

@@ -7,15 +7,20 @@
 #include "../h/utility.h"
 #include "../h/section.h"
 #include "../h/operational_code_table.h"
+
+
+SymbolTable Assembler::testSymbol; 
+
+Assembler::Assembler()
+{
+   _symbolTable = std::make_shared<SymbolTable>();
+   _sectionTable= std::make_shared<SectionTable>();
+}
+
 bool Assembler::firstPass(ArrayOfStrings &instructions)
 {
-    _currentSection = std::shared_ptr<Section>(nullptr);
-
+    PRINT(Assembler::testSymbol.size());
     uint16_t value = 0;
-    bool def_flag = false;
-    bool dup_flag = false;
-    bool org = false;
-
     for (auto &line : instructions)
     {
         uint8_t inst = 0;
@@ -71,7 +76,7 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
                 }
                 auto label = word.substr(0, word.length() - 1);
                 auto symbol = std::make_shared<Symbol>(label, _currentSection, _currentSection->getLocationCounter() - _currentSection->getBeginLocationCounter());
-                symbol->setIndex(uint16_t(this->_symbolTable->size()) + 1);
+                symbol->setIndex(uint16_t(_symbolTable->size()) + 1);
                 _symbolTable->insert(symbol);
                 continue;
             }
@@ -79,7 +84,8 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
             if (word[0] == '.')
             {
                 auto name = word;
-                auto section = std::make_shared<Section>(name, _symbolTable->size() + 1, value);
+              //  auto section = std::make_shared<Section>(new Section(name, _symbolTable->size() + 1, value));
+                auto section = std::make_shared<Section>(name, _symbolTable->size() + 1, value);              
                 value = 0;
 
                 _sectionTable->insert(section);
@@ -113,8 +119,3 @@ bool Assembler::secoundPass(ArrayOfStrings &instructions)
 {
     return true;
 }
-Assembler::Assembler()
-{
-    _symbolTable = std::shared_ptr<SymbolTable>();
-}
-

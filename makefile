@@ -11,9 +11,9 @@ LDFLAGS=
 EXECUTABLE=$(BIN_FILE)/as
 all: make_dirs $(SOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+	$(CC) $(LDFLAGS) $(OBJECTS) -g3 -gdwarf-2 -o $@
 $(OBJ_FILE)/%.o: $(SRC_FILE)/%.cpp
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDES) -g3 -gdwarf-2 -c $< -o $@
 .PHONY: clean clean_obj clean_exe clean_~ make_dirs
 make_dirs:
 	mkdir -p $(BIN_FILE)

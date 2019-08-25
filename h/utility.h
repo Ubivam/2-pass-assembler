@@ -15,9 +15,6 @@ public:
 public:
     //Prenosimo po referenci liniju i delimetre preko kojih hvatamo tokene
     static std::vector<std::string> tokenizeString(const std::string &str, const std::string &delimetars);
-    static SectionTable secTable;
-    static SymbolTable symbTable;
-
 public:
     //Regex for types of adressing
     static std::regex register_regex;

@@ -17,6 +17,9 @@ private:
     bool end = false;
 
 public:
+
+    static SymbolTable testSymbol;
+public:
     Assembler();
     //Analysis Phase
     bool firstPass(ArrayOfStrings &instructions);

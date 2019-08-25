@@ -15,7 +15,6 @@ public:
 
     void appendData(uint32_t value, uint8_t size, bool firstWord = true);
 
-    void saveAndResetLocCounter(std::shared_ptr<RelocationEntry> &entry);
 
 public:
     std::string getName() const;
@@ -36,7 +35,5 @@ private:
     uint32_t _endLocCouter;
     std::vector<uint8_t> _data;
     uint32_t _index;
-    std::string _flags;
-    RelocationTable _table;
 };
 #endif

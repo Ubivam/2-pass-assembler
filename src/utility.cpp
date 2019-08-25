@@ -8,7 +8,6 @@
 
 SectionTable Utility::secTable;
 SymbolTable Utility::symbTable;
-
 bool Utility::readFile(std::string fileName, ArrayOfStrings &instructions)
 {
 
@@ -33,36 +32,34 @@ bool Utility::readFile(std::string fileName, ArrayOfStrings &instructions)
     return true;
 }
 
-std::vector<std::string> Utility::tokenizeString(const std::string &line, const std::string &delimetar)
+std::vector<std::string> Utility::tokenizeString(const std::string& str, const std::string& delimiters)
 {
-    std::vector<std::string> tokens;
-    if (line.empty())
-        return tokens;
-    //Preskoci prvi delimetar na pocetku
-    std::string::size_type lastPos = line.find_first_not_of(delimetar, 0);
-    std::string::size_type pos = line.find_first_of(delimetar, lastPos);
+	std::vector<std::string> tokens;
+	if (str.empty())return tokens;
+	// Skip delimiters at beginning.
+	std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
+	// Find first "non-delimiter".
+	std::string::size_type pos = str.find_first_of(delimiters, lastPos);
 
-    // std::string::npos means unitl the end of the string
-    while (std::string::npos != pos || std::string::npos != lastPos)
-    {
-        std::string subSt = subSt.substr(lastPos, pos - lastPos);
-        if (subSt.find(";") != std::string::npos)
-            return tokens;
-        if (subSt.find("[") != std::string::npos)
-        {
-            auto first = line.find_first_of("[");
-            auto last = line.find_last_of("]");
-            tokens.push_back(line.substr(first, last - first + 1));
-            return tokens;
-        }
-        tokens.push_back(line.substr(lastPos, pos - lastPos));
-
-        lastPos = line.find_first_not_of(delimetar, pos);
-        pos = line.find_first_of(delimetar, lastPos);
-    }
-    return tokens;
+	while (std::string::npos != pos || std::string::npos != lastPos)
+	{  // Found a token, add it to the vector.
+		std::string sub = str.substr(lastPos, pos - lastPos);
+		if (sub.find(";") != std::string::npos) return tokens;
+		if (sub.find("[") != std::string::npos)
+		{
+			auto first = str.find_first_of("[");
+			auto last = str.find_last_of("]");
+			tokens.push_back(str.substr(first, last - first + 1));
+			return tokens;
+		}
+		tokens.push_back(str.substr(lastPos, pos - lastPos));
+		// Skip delimiters.  Note the "not_of"
+		lastPos = str.find_first_not_of(delimiters, pos);
+		// Find next "non-delimiter"
+		pos = str.find_first_of(delimiters, lastPos);
+	}
+	return tokens;
 }
-
 void Utility::writeFile(std::string fileName)
 {
     std::ofstream outFile(fileName);
