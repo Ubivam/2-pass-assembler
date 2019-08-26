@@ -6,8 +6,6 @@
 #include "../h/utility.h"
 #include "../h/assembler.h"
 
-SectionTable Utility::secTable;
-SymbolTable Utility::symbTable;
 bool Utility::readFile(std::string fileName, ArrayOfStrings &instructions)
 {
 
@@ -60,14 +58,14 @@ std::vector<std::string> Utility::tokenizeString(const std::string& str, const s
 	}
 	return tokens;
 }
-void Utility::writeFile(std::string fileName)
+void Utility::writeFile(std::shared_ptr<Assembler> a, std::string fileName)
 {
     std::ofstream outFile(fileName);
 
     std::string output = "#TableOfSymbols\n";
-    output += Utility::secTable.to_string();
+    output += a->_sectionTable.to_string();
 
-    for (auto symbol : Utility::symbTable)
+    for (auto symbol : a->_symbolTable)
     {
         if(!symbol->isSection()){
             output += symbol->to_string() +"\n";

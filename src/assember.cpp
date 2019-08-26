@@ -8,19 +8,16 @@
 #include "../h/section.h"
 #include "../h/operational_code_table.h"
 
-
-SymbolTable Assembler::testSymbol; 
-
 Assembler::Assembler()
 {
-   _symbolTable = std::make_shared<SymbolTable>();
-   _sectionTable= std::make_shared<SectionTable>();
 }
 
 bool Assembler::firstPass(ArrayOfStrings &instructions)
 {
-    PRINT(Assembler::testSymbol.size());
+    auto _currentSection = std::shared_ptr<Section>(nullptr);
+
     uint16_t value = 0;
+
     for (auto &line : instructions)
     {
         uint8_t inst = 0;
@@ -45,7 +42,7 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
             {
                 while (&word != &line.back())
                 {
-                    _symbolTable->insert(std::make_shared<Symbol>(word, _currentSection, _currentSection->getLocationCounter()));
+                    _symbolTable.insert(std::make_shared<Symbol>(word, _currentSection, _currentSection->getLocationCounter()));
                     _currentSection->incLocationCounter(1);
                 }
             }
@@ -76,24 +73,25 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
                 }
                 auto label = word.substr(0, word.length() - 1);
                 auto symbol = std::make_shared<Symbol>(label, _currentSection, _currentSection->getLocationCounter() - _currentSection->getBeginLocationCounter());
-                symbol->setIndex(uint16_t(_symbolTable->size()) + 1);
-                _symbolTable->insert(symbol);
+                symbol->setIndex(uint16_t(_symbolTable.size()) + 1);
+                _symbolTable.insert(symbol);
                 continue;
             }
             // if it is a section
             if (word[0] == '.')
             {
                 auto name = word;
-              //  auto section = std::make_shared<Section>(new Section(name, _symbolTable->size() + 1, value));
-                auto section = std::make_shared<Section>(name, _symbolTable->size() + 1, value);              
+                //  auto section = std::make_shared<Section>(new Section(name, _symbolTable->size() + 1, value));
+                PRINT(_symbolTable.size());
+                auto section = std::make_shared<Section>(name, _symbolTable.size() + 1, value);
                 value = 0;
 
-                _sectionTable->insert(section);
+                _sectionTable.insert(section);
                 _currentSection = section;
 
                 auto symbol = std::make_shared<Symbol>(name, _currentSection, _currentSection->getLocationCounter());
-                symbol->setIndex(uint16_t(_symbolTable->size()) + 1);
-                _symbolTable->insert(symbol);
+                symbol->setIndex(uint16_t(_symbolTable.size()) + 1);
+                _symbolTable.insert(symbol);
                 break;
             }
             //Is it instruction

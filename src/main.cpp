@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
                 PRINT("There was an error with secound Pass");
                 return -1;
         }
-        Utility::writeFile(argv[2]);
+        Utility::writeFile(assembler,argv[2]);
         PRINT("Both passes succesfully passed!");
         return 0;
 }

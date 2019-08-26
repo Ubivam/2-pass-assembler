@@ -5,12 +5,13 @@
 #include <vector>
 #include <memory>
 #include "../h/macros.h"
+#include "../h/assembler.h"
 #include "../h/macros.h"
 class Utility
 {
 public:
     static bool readFile(std::string fileName, ArrayOfStrings &instructions);
-    static void writeFile(std::string fileName);
+    static void writeFile(std::shared_ptr<Assembler> a,std::string fileName);
 
 public:
     //Prenosimo po referenci liniju i delimetre preko kojih hvatamo tokene
