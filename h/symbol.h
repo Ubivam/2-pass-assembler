@@ -6,6 +6,7 @@
 class Symbol
 {
 public:
+	Symbol();
     Symbol(std::string label, std::shared_ptr<Section> section, uint16_t offset, bool isSection = false, bool isLocal = true);
 
 public: //SETTERS

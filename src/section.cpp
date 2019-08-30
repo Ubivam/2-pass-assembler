@@ -35,7 +35,7 @@ void Section::appendData(uint32_t value, uint8_t size, bool firstWord)
     {
         for (auto i = 0; i < size; i++)
         {
-            _data.push_back(u_int8_t(value));
+            _data.push_back(uint8_t(value));
             value >>= 8;
         }
     }

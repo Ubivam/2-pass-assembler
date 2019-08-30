@@ -31,14 +31,11 @@ public:
     }
     std::shared_ptr<T> find(std::string name)
     {
-        for (auto &section : _table)
-        {
-            if (section.getName() == name)
-            {
-                return section;
-            }
-        }
-        return 0;
+		return *std::find_if(std::begin(_table), std::end(_table), [&] (auto entry)
+			{
+				return name == entry->getName();
+			}
+			);
     }
     std::shared_ptr<T> *begin()
     {

@@ -22,12 +22,12 @@ int main(int argc, char *argv[])
                 PRINT("There was an error in readingFile");
                 return -1;
         }
-        if (assembler->firstPass(instructions))
+        if (!assembler->firstPass(instructions))
         {
                 PRINT("There was an error with first Pass");
                 return -1;
         }
-        if (assembler->secoundPass(instructions))
+        if (!assembler->secoundPass(instructions))
         {
                 PRINT("There was an error with secound Pass");
                 return -1;

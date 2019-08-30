@@ -9,11 +9,9 @@
 class Assembler
 {
 public:
-    SymbolTable _symbolTable;
-    SectionTable _sectionTable;
+   static SymbolTable symbolTable;
+   static SectionTable sectionTable;
 private:
-    bool _globalFlag;
-    bool _externFlag;
     bool end = false;
 
 public:

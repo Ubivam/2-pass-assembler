@@ -14,5 +14,6 @@ typedef Table<Section> SectionTable;
 typedef Table<Literal> LiteralTable;
 typedef Table<RelocationEntry> RelocationTable;
 typedef std::vector<std::vector<std::string>> ArrayOfStrings;
+typedef bool RelocationType;
 
 #endif

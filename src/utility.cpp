@@ -62,10 +62,12 @@ void Utility::writeFile(std::shared_ptr<Assembler> a, std::string fileName)
 {
     std::ofstream outFile(fileName);
 
-    std::string output = "#TableOfSymbols\n";
-    output += a->_sectionTable.to_string();
-
-    for (auto symbol : a->_symbolTable)
+    std::string output = "#TableOfSections\n";
+    output += a->sectionTable.to_string();
+    
+	output += "#TableOfSymbols\n";
+	a->symbolTable.insert(std::shared_ptr<Symbol>(nullptr));
+    for (auto symbol : a->symbolTable)
     {
         if(!symbol->isSection()){
             output += symbol->to_string() +"\n";
@@ -84,6 +86,19 @@ void Utility::writeFile(std::shared_ptr<Assembler> a, std::string fileName)
     }**/
     outFile << output;
     outFile.close();
+}
+void Utility::updateGlobal(std::vector<std::string>& line) 
+{
+	auto global = false;
+	for (auto& word2 : line)
+	{
+		if (global)
+		{
+			auto symbol = Assembler::symbolTable.find(word2);
+			symbol->setLocal(GLOBAL_SYMBOL);
+		}
+		if (word2 == ".global") global = true;
+	}
 }
 
 std::regex Utility::register_regex("^(R([0-9]||1[0-5])||SP||PC)$");
