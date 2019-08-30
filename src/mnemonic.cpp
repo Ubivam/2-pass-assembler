@@ -23,9 +23,13 @@ uint8_t Mnemonic::getInstructionSize(uint8_t mode)
 	}
 	return 0;
 }
+uint8_t Mnemonic::getRegisterCode(std::string reg)
+{
+	return uint8_t();
+}
 uint8_t Mnemonic::constructInstruction(std::vector<std::string> inst) const
 {
-    return 0;
+	uint32_t ret = _code << 24;
 }
 uint8_t Mnemonic::getCode() const 
 {

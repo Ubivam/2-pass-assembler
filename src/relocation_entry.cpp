@@ -15,7 +15,7 @@ _index (index)
 std::string RelocationEntry::to_string() const
 {
 	std::stringstream stream;
-	std::string type = (_type == R_386_32) ? "A" : "R";
+	std::string type = (_type == R_386_32) ? "ABS" : "REL";
 	stream << "0x" << std::uppercase << std::hex << _offset << " " << type << " " << std::dec << _index;
 	auto s = stream.str();
 	return s;

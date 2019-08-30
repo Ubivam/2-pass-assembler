@@ -55,8 +55,7 @@ uint8_t OperationalCodeTable::getAddressModes(std::string operation)
 
 uint32_t OperationalCodeTable::constructInstruction(std::vector<std::string> inst)
 {
-    auto mnemonic = OperationalCodeTable::get(inst[0]);
-    return mnemonic->constructInstruction(inst);
+    
 }
 uint32_t OperationalCodeTable::constructSecountWord(std::vector<std::string> inst, std::shared_ptr<Section> currentSection)
 {
