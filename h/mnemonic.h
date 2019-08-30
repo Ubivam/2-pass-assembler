@@ -8,14 +8,14 @@
 class Mnemonic
 {
 public:
-	Mnemonic(std::string& name, uint8_t code, uint8_t modes, uint8_t type, uint8_t _inst_type = 0);
+	Mnemonic(std::string& name, uint8_t code, uint8_t modes, uint8_t type, uint8_t _inst_type = 0, bool singleOperand = false);
 	uint8_t constructInstruction(std::vector<std::string> inst) const;
 
 public:
 	bool isValid(uint8_t mode) const;
 
 public:
-	static uint8_t getInstructionSize(uint8_t mode);
+	static uint8_t getInstructionSize(uint8_t mode, bool isByteSize);
 	static uint8_t getRegisterCode(std::string reg);
 	static uint8_t getRegisterIndCode(std::string reg);
 
@@ -34,5 +34,6 @@ private:
 	uint8_t _modes;
 	uint8_t _type;
 	uint8_t _inst_type;
+	bool _single_operand;
 };
 #endif

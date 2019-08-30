@@ -101,8 +101,12 @@ void Utility::updateGlobal(std::vector<std::string>& line)
 	}
 }
 
-std::regex Utility::register_regex("^(R([0-9]||1[0-5])||SP||PC)$");
+//Register Regex
+std::regex Utility::register_regex("^(R([0-9]||1[0-5])||SP||PC||PSW)$");
 std::regex Utility::regindpom_regex("^\\[(R([0-9]||1[0-5])||PC||SP) *(\\+||\\-) *(0x||0b)?[a-zA-z0-9]+\\]$");
 std::regex Utility::regind_regex("^\\[(R([0-9]||1[0-5])||PC||SP)\\]$");
 std::regex Utility::immed_regex("^#([0-9A-F]+||[a-zA-z][a-zA-Z0-9]*)");
 std::regex Utility::memdir_regex("^\\$?[a-zA-Z][a-zA-Z0-9]*$");
+
+//Instruction Regex
+std::regex Utility::instruction_regex("int|add|sub|mul|mov|div|cmp|and|or|not|test|xor|xchg|call|shr|shl|halt|ret|iret|pop|push|jmp|jeq|jne|jgt)(b|w)?");

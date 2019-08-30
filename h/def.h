@@ -13,6 +13,7 @@ typedef Table<Symbol> SymbolTable;
 typedef Table<Section> SectionTable;
 typedef Table<Literal> LiteralTable;
 typedef Table<RelocationEntry> RelocationTable;
+typedef std::vector<uint8_t>  Instruction;
 typedef std::vector<std::vector<std::string>> ArrayOfStrings;
 typedef bool RelocationType;
 

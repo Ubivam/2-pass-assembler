@@ -24,5 +24,8 @@ public:
     static std::regex regind_regex;
     static std::regex immed_regex;
     static std::regex memdir_regex;
+
+    //Regex for types of operands
+    static std::regex instruction_regex;
 };
 #endif

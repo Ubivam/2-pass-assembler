@@ -14,15 +14,15 @@ Assembler::Assembler()
 {
 }
 
-bool Assembler::firstPass(ArrayOfStrings& instructions)
+bool Assembler::firstPass(ArrayOfStrings &instructions)
 {
 	auto _currentSection = std::shared_ptr<Section>(nullptr);
 	uint16_t value = 0;
 
-	for (auto& line : instructions)
+	for (auto &line : instructions)
 	{
 		uint8_t inst = 0;
-		for (auto& word : line)
+		for (auto &word : line)
 		{
 			if (word == ".end")
 			{
@@ -146,22 +146,22 @@ bool Assembler::firstPass(ArrayOfStrings& instructions)
 	return true;
 }
 
-bool Assembler::secoundPass(ArrayOfStrings & instructions)
+bool Assembler::secoundPass(ArrayOfStrings &instructions)
 {
-	for (auto& sec : sectionTable)
+	for (auto &sec : sectionTable)
 	{
 		//TODO: Save and reset loc counter
 	}
-	for (auto& line : instructions)
+	for (auto &line : instructions)
 	{
 		Utility::updateGlobal(line);
 	}
 	auto _currentSelection = std::shared_ptr<Section>(nullptr);
 
-	for (auto& line : instructions)
+	for (auto &line : instructions)
 	{
 		auto inst = 0;
-		for (auto& word : line)
+		for (auto &word : line)
 		{
 			if (word == ".end")
 			{
@@ -172,7 +172,7 @@ bool Assembler::secoundPass(ArrayOfStrings & instructions)
 				//Utility::updateGlobal(line);
 				break;
 			}
-			if (word == ".equ") 
+			if (word == ".equ")
 			{
 				continue;
 			}
