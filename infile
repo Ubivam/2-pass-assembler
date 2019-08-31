@@ -1,6 +1,9 @@
 .global b,k
 .text
 a:
-add r1,r2
-   jmp 20
-   jmp *20
+MUL R3, #1442
+DIV R5, [230]
+ADD R2, [R1+2013]
+SUB R1, R2
+   JMP 20
+   JMP *20

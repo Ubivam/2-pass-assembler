@@ -19,9 +19,8 @@ std::shared_ptr<Mnemonic> OperationalCodeTable::get(std::string operand)
     return _map.find(operand)->second;
 }
 
-uint8_t OperationalCodeTable::getAddressMode(std::vector<std::string> &instruction)
+uint8_t OperationalCodeTable::getAddressMode(std::string &operation)
 {
-    auto operation = instruction[instruction.size() - 1];
     if (std::regex_match(operation, Utility::register_regex))
     {
         return REGDIR;
@@ -49,12 +48,14 @@ uint8_t OperationalCodeTable::getAddressMode(std::vector<std::string> &instructi
 bool OperationalCodeTable::isByteSize(std::vector<std::string> &instruction)
 {
     std::smatch s;
-    auto operation = instruction[instruction.size()-1);
-    if(std::regex_search(operation,s, Utility::instruction_regex))
+    auto operation = instruction[instruction.size() - 1];
+    if (std::regex_search(operation, s, Utility::instruction_regex))
     {
         auto ss = s[2];
-        if(ss="w") return false;
-        else if(ss="b") return true;
+        if (ss == "W")
+            return false;
+        else if (ss == "B")
+            return true;
     }
     return false;
 }
@@ -65,7 +66,7 @@ uint8_t OperationalCodeTable::getAddressModes(std::string operation)
     return mnemonic->getModes();
 }
 
-uint32_t OperationalCodeTable::constructInstruction(std::vector<std::string> inst)
+Instruction OperationalCodeTable::constructInstruction(std::vector<std::string> inst)
 {
     auto mnemonic = OperationalCodeTable::get(inst[0]);
     return mnemonic->constructInstruction(inst);
@@ -78,7 +79,7 @@ uint32_t OperationalCodeTable::constructSecountWord(std::vector<std::string> ins
     if (dolar)
         op = op.substr(1);
     std::shared_ptr<RelocationEntry> entry = std::shared_ptr<RelocationEntry>(nullptr);
-    switch (OperationalCodeTable::getAddressMode(inst))
+    switch (OperationalCodeTable::getAddressMode(inst[1]))
     {
     }
     return ret;
@@ -99,13 +100,16 @@ uint8_t OperationalCodeTable::checkInstruction(std::string op, std::vector<std::
 
     auto instruction = OperationalCodeTable::getInstruction(op, line);
 
-    auto address_mode = OperationalCodeTable::getAddressMode(instruction);
+    auto address_mode = OperationalCodeTable::getAddressMode(line[1]);
 
-    auto isByteInstruction = OperationalCodeTable::isByteSize(instruction);
+    auto is_byte_instruction = OperationalCodeTable::isByteSize(instruction);
 
     if (address_mode & OperationalCodeTable::getAddressModes(op))
     {
-        return Mnemonic::getInstructionSize(address_mode, isByteInstruction);
+        auto mn = _map.at(op);
+        auto code = mn->getCode();
+        auto is_single = mn->getIsSingleOperand();
+        return Mnemonic::getInstructionSize(address_mode, code, is_byte_instruction, is_single);
     }
 
     return -1;
@@ -113,7 +117,7 @@ uint8_t OperationalCodeTable::checkInstruction(std::string op, std::vector<std::
 void OperationalCodeTable::init()
 {
     std::string instruction = "HALT";
-    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x01, REGDIR, JMP_INSTRUCTION, 0, true)));
+    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x01, REGDIR, CONTROL_INSTRUCTION, 0, true)));
     instruction = "XCHD";
     _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x02, REGDIR, ALU_INSTRUCTION)));
     instruction = "INT";

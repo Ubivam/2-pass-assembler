@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <memory>
+#include <string>
+#include <algorithm>
 template <class T>
 class Table
 {
@@ -31,11 +33,13 @@ public:
     }
     std::shared_ptr<T> find(std::string name)
     {
-		return *std::find_if(std::begin(_table), std::end(_table), [&] (auto entry)
-			{
-				return name == entry->getName();
-			}
-			);
+        return *std::find_if(
+            std::begin(_table),
+            std::end(_table),
+            [&](auto entry) 
+            {
+                return name == entry->getName();
+            });
     }
     std::shared_ptr<T> *begin()
     {

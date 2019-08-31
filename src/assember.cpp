@@ -129,13 +129,6 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
 			if (OperationalCodeTable::find(word))
 			{
 				auto bytes = OperationalCodeTable::checkInstruction(word, line);
-				if (word == "RET")
-					bytes = 4;
-				if (bytes == -1)
-				{
-					PRINT("Error ocured!");
-					return false;
-				}
 				_currentSection->incLocationCounter(bytes);
 				continue;
 			}

@@ -109,4 +109,4 @@ std::regex Utility::immed_regex("^#([0-9A-F]+||[a-zA-z][a-zA-Z0-9]*)");
 std::regex Utility::memdir_regex("^\\$?[a-zA-Z][a-zA-Z0-9]*$");
 
 //Instruction Regex
-std::regex Utility::instruction_regex("int|add|sub|mul|mov|div|cmp|and|or|not|test|xor|xchg|call|shr|shl|halt|ret|iret|pop|push|jmp|jeq|jne|jgt)(b|w)?");
+std::regex Utility::instruction_regex("(INT|ADD|SUB|MUL|MOV|DIV|CMP|AND|OR|NOT|TEST|XOR|XCHG|CALL|SHR|SHL|HALT|RET|IRET|POP|PUSH|JMP|JEQ|JNE|JGT)(B|W)?");
