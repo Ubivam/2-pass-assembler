@@ -4,16 +4,16 @@ CC=g++ --std=c++14
 	BIN_FILE=bin
 	INC_FILE=h
 	INCLUDES=-I $(INC_FILE)
-CFLAGS=
+CFLAGS= -g3 -gdwarf-2
 LDFLAGS=
 	SOURCES=$(wildcard $(SRC_FILE)/*.cpp)
 	OBJECTS=$(patsubst $(SRC_FILE)/%.cpp, $(OBJ_FILE)/%.o, $(SOURCES))
 EXECUTABLE=$(BIN_FILE)/as
 all: make_dirs $(SOURCES) $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -g3 -gdwarf-2 -o $@
+	$(CC) $(LDFLAGS) $(OBJECTS)  -o $@
 $(OBJ_FILE)/%.o: $(SRC_FILE)/%.cpp
-	$(CC) $(CFLAGS) $(INCLUDES) -g3 -gdwarf-2 -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 .PHONY: clean clean_obj clean_exe clean_~ make_dirs
 make_dirs:
 	mkdir -p $(BIN_FILE)

@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[])
 {
-        if (argc != 3)
+        if (argc < 3)
         {
                 PRINT("You entered wrong arguments");
                 return -1;

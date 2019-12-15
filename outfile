@@ -1,6 +1,0 @@
-#TableOfSections
-SEG3 .text 3 0x0 0x0
-#TableOfSymbols
-SYM1b NULL 0x0 G
-SYM2k NULL 0x0 G
-SYM4 a 3 0x0 L
