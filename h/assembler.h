@@ -11,18 +11,24 @@ class Assembler
 public:
    static SymbolTable symbolTable;
    static SectionTable sectionTable;
+   static Code codeSegment;
+
 private:
+    static std::shared_ptr<Assembler> mInstance; 
     bool end = false;
 
 public:
+    std::shared_ptr<Section> currentSection;
+public:
     Assembler();
+    static std::shared_ptr<Assembler> getInstace();
+   
     //Analysis Phase
     bool firstPass(ArrayOfStrings &instructions);
     void analizeUndefined();
-
-public:
     //Synthesis Phase
     bool secoundPass(ArrayOfStrings &instruction);
+
 };
 
 #endif

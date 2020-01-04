@@ -7,16 +7,30 @@
 #include "../h/utility.h"
 #include "../h/section.h"
 #include "../h/operational_code_table.h"
+#include "../h/relocation_entry.h"
 
 SymbolTable Assembler::symbolTable;
 SectionTable Assembler::sectionTable;
+Code Assembler::codeSegment;
+std::shared_ptr<Assembler> Assembler::mInstance = std::shared_ptr<Assembler>(nullptr);
+
 Assembler::Assembler()
 {
 }
 
+std::shared_ptr<Assembler> Assembler::getInstace()
+{
+	if(mInstance == nullptr)
+	{
+		mInstance = std::make_shared<Assembler>();
+	}
+	return mInstance;
+}
+
+//Prvi prolaz koristimo kako bismo popunili tabelu simbola
 bool Assembler::firstPass(ArrayOfStrings &instructions)
 {
-	auto _currentSection = std::shared_ptr<Section>(nullptr);
+ 	currentSection = std::shared_ptr<Section>(nullptr);
 	uint16_t value = 0;
 
 	for (auto &line : instructions)
@@ -33,7 +47,7 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
 				auto it = &word;
 				while (it != &line.back())
 				{
-					auto symbol = std::make_shared<Symbol>(*(it + 1), _currentSection, 0, NOT_SECTION, GLOBAL_SYMBOL);
+					auto symbol = std::make_shared<Symbol>(*(it + 1), currentSection, 0, NOT_SECTION, GLOBAL_SYMBOL);
 					symbol->setIndex(uint16_t(symbolTable.size()) + 1);
 					symbolTable.insert(symbol);
 					it++;
@@ -45,7 +59,7 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
 				auto it = &word;
 				while (it != &line.back())
 				{
-					auto symbol = std::make_shared<Symbol>(*(it + 1), _currentSection, 0, NOT_SECTION, GLOBAL_SYMBOL);
+					auto symbol = std::make_shared<Symbol>(*(it + 1), currentSection, 0, NOT_SECTION, GLOBAL_SYMBOL);
 					symbol->setIndex(uint16_t(symbolTable.size()) + 1);
 					symbolTable.insert(symbol);
 					it++;
@@ -54,61 +68,87 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
 			}
 			if (word == ".equ")
 			{
-				auto symbolName = &word + 1;
-				auto value = &word + 2;
-				auto symbol = std::make_shared<Symbol>(word, _currentSection, _currentSection->getBeginLocationCounter(), NOT_SECTION, GLOBAL_SYMBOL);
+				auto symbolName = *(&word + 1);
+				auto value = (uint32_t) std::stoi(*(&word + 2));
+				std::shared_ptr<Symbol> symbol;
+				if (currentSection == nullptr)
+				{
+					symbol = std::make_shared<Symbol>(symbolName, currentSection, 0 , NOT_SECTION, GLOBAL_SYMBOL);
+				}
+				symbol = std::make_shared<Symbol>(symbolName, currentSection, currentSection->getBeginLocationCounter(), NOT_SECTION, LOCAL_SYMBOL);
 				symbol->setIndex(uint16_t(symbolTable.size()) + 1);
+				symbol->setOffset(value);
+
+				symbolTable.insert(symbol);
 				continue;
 			}
 			if (word == ".byte")
 			{
-				auto it = &word;
-				while (it != &line.back())
+				if (currentSection != nullptr)
 				{
-					_currentSection->incLocationCounter(1);
-					auto symbol = std::make_shared<Symbol>(word, _currentSection, _currentSection->getLocationCounter());
-					symbol->setIndex(uint16_t(symbolTable.size()) + 1);
-					symbolTable.insert(symbol);
-					it++;
+					for (int i = 1; i < line.size(); i++)
+					{
+						currentSection->incLocationCounter(1);
+						auto symbol = std::make_shared<Symbol>(line[i], currentSection, currentSection->getLocationCounter());
+						symbol->setIndex(uint16_t(symbolTable.size()) + 1);
+						symbolTable.insert(symbol);
+					}
+				}
+				continue;
+			}
+			if (word == ".word")
+			{
+				if (currentSection != nullptr)
+				{
+					for (int i = 1; i < line.size(); i++)
+					{
+						currentSection->incLocationCounter(2);
+						auto symbol = std::make_shared<Symbol>(line[i], currentSection, currentSection->getLocationCounter());
+						symbol->setIndex(uint16_t(symbolTable.size()) + 1);
+						symbolTable.insert(symbol);
+					}
 				}
 				continue;
 			}
 			if (word == ".align")
 			{
-				if (!_currentSection)
+				if (!currentSection)
 				{
 					PRINT("Current section is nullptr");
 					return false;
 				}
-				uint8_t i = 0;
-				while ((std::stoi((*(&word + i))) % _currentSection->getLocationCounter()) == 0)
+				uint16_t val = (uint16_t)(std::stoi((*(&word + 1))));
+				while (((currentSection->getLocationCounter() -1) % val) != 0)
 				{
-					_currentSection->incLocationCounter(1);
-					i++;
+					currentSection->incLocationCounter(1);
 				}
 				continue;
 			}
 			if (word == ".skip")
 			{
-				if (_currentSection != nullptr)
-					_currentSection->incLocationCounter(stoi(*(&word + 1)));
+				if (currentSection != nullptr)
+					currentSection->incLocationCounter(stoi(*(&word + 1)));
 				continue;
 			}
+
+			/*U narednom bloku vrsimo provere da li je konkretna rec labela | instrukcija ili sekcija*/
+
+			//Proveravamo da li je data rec labela
 			if (word.find(":") != std::string::npos)
 			{
 				//if(inst & INSTRUCTION)
-				if (!_currentSection)
+				if (!currentSection)
 				{
 					PRINT("Current section is nullptr");
 					return false;
 				}
 				auto label = word.substr(0, word.length() - 1);
-				auto symbol = std::make_shared<Symbol>(label, _currentSection, _currentSection->getLocationCounter() - _currentSection->getBeginLocationCounter());
-				symbol->setIndex(uint16_t(symbolTable.size()) + 1);
+				auto symbol = std::make_shared<Symbol>(label, currentSection, currentSection->getLocationCounter() - currentSection->getBeginLocationCounter());
+				symbol->setIndex(uint16_t(symbolTable.size()));
 				symbolTable.insert(symbol);
 				continue;
 			}
-			// if it is a section
+			// Proveravamo da li je data rec sekcija (Gore smo prosli sve slucajeve za direktive tako da izraz koji pocinje sa tackom mora da bude sekcija)
 			if (word[0] == '.')
 			{
 				auto name = word;
@@ -118,22 +158,24 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
 				value = 0;
 
 				sectionTable.insert(section);
-				_currentSection = section;
+				currentSection = section;
 
-				auto symbol = std::make_shared<Symbol>(name, _currentSection, _currentSection->getLocationCounter(), IS_SECTION, true);
+				auto symbol = std::make_shared<Symbol>(name, currentSection, currentSection->getLocationCounter(), IS_SECTION, true);
 				symbol->setIndex(uint16_t(symbolTable.size()) + 1);
+
 				symbolTable.insert(symbol);
 				continue;
 			}
-			//Is it instruction
+
+			//Proveravamo da li je data rec instrukcija
 			if (OperationalCodeTable::find(word))
 			{
 				auto bytes = OperationalCodeTable::checkInstruction(word, line);
-				_currentSection->incLocationCounter(bytes);
+				currentSection->incLocationCounter(bytes);
 				continue;
 			}
-			//PRINT("You have Syntax error");
-			//return false;
+			//	PRINT("You have Syntax error");
+			//	return false;
 		}
 	}
 	return true;
@@ -141,15 +183,19 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
 
 bool Assembler::secoundPass(ArrayOfStrings &instructions)
 {
+	symbolTable.insert(std::shared_ptr<Symbol>(nullptr));
+	sectionTable.insert(std::shared_ptr<Section>(nullptr));
+	//Ovde smo dodali prazne elemente na kraj tabela sekcija i tabela simbola jer for each ne uzima zadnji element u obzir
+
 	for (auto &sec : sectionTable)
 	{
-		//TODO: Save and reset loc counter
+		sec->saveAndResetLocationCounter();
 	}
 	for (auto &line : instructions)
 	{
 		Utility::updateGlobal(line);
 	}
-	auto _currentSelection = std::shared_ptr<Section>(nullptr);
+	currentSection = std::shared_ptr<Section>(nullptr);
 
 	for (auto &line : instructions)
 	{
@@ -162,7 +208,11 @@ bool Assembler::secoundPass(ArrayOfStrings &instructions)
 			}
 			if (word == ".global")
 			{
-				//Utility::updateGlobal(line);
+
+				break;
+			}
+			if (word == ".extern")
+			{
 				break;
 			}
 			if (word == ".equ")
@@ -171,14 +221,62 @@ bool Assembler::secoundPass(ArrayOfStrings &instructions)
 			}
 			if (word == ".align")
 			{
+				if (currentSection != nullptr)
+				{
+					uint16_t val = (uint16_t) (std::stoi((*(&word + 1))));
+					while (((currentSection->getLocationCounter() -1) % val) != 0)
+					{
+						currentSection->incLocationCounter(1);
+						Instruction ins;
+						ins.push_back(0x00);
+						codeSegment.push_back(ins);
+					}
+					continue;
+				}
 				continue;
 			}
 			if (word == ".skip")
 			{
+				if (currentSection != nullptr)
+				{
+					auto num_of_bytes = stoi(*(&word + 1));
+					currentSection->incLocationCounter(num_of_bytes);
+					Instruction ins;
+					for (int i = 0; i < num_of_bytes; i++)
+					{
+						ins.push_back(0x00);
+					}
+					codeSegment.push_back(ins);
+				}
 				continue;
 			}
 			if (word == ".byte")
 			{
+				if (currentSection != nullptr)
+				{
+					for (int i = 1; i < line.size(); i++)
+					{
+						currentSection->incLocationCounter(2);
+						Instruction ins;
+						ins.push_back(0x00);
+						codeSegment.push_back(ins);
+					}
+				}
+				continue;
+			}
+			if (word == ".word")
+			{
+				if (currentSection != nullptr)
+				{
+					for (int i = 1; i < line.size(); i++)
+					{
+						currentSection->incLocationCounter(2);
+						Instruction ins;
+						ins.push_back(0x00);
+						ins.push_back(0x00);
+						codeSegment.push_back(ins);
+					}
+				}
 				continue;
 			}
 			if (word.find(":") != std::string::npos)
@@ -188,16 +286,17 @@ bool Assembler::secoundPass(ArrayOfStrings &instructions)
 			if (word[0] == '.')
 			{
 				auto name = word;
-				_currentSelection = sectionTable.find(word);
+				currentSection = sectionTable.find(name);
 				break;
 			}
 			if (OperationalCodeTable::find(word))
 			{
 				auto bytes = OperationalCodeTable::checkInstruction(word, line);
+				currentSection->incLocationCounter(bytes);
 				auto instruction = OperationalCodeTable::getInstruction(word, line);
-				auto first_32 = OperationalCodeTable::constructInstruction(instruction);
+				auto binary_instruction = OperationalCodeTable::constructInstruction(instruction);
 
-				//TODO Construct word
+				codeSegment.push_back(binary_instruction);
 			}
 		}
 	}

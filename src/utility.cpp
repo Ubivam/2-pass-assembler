@@ -43,13 +43,7 @@ std::vector<std::string> Utility::tokenizeString(const std::string& str, const s
 	{  // Found a token, add it to the vector.
 		std::string sub = str.substr(lastPos, pos - lastPos);
 		if (sub.find(";") != std::string::npos) return tokens;
-		if (sub.find("[") != std::string::npos)
-		{
-			auto first = str.find_first_of("[");
-			auto last = str.find_last_of("]");
-			tokens.push_back(str.substr(first, last - first + 1));
-			return tokens;
-		}
+
 		tokens.push_back(str.substr(lastPos, pos - lastPos));
 		// Skip delimiters.  Note the "not_of"
 		lastPos = str.find_first_not_of(delimiters, pos);
@@ -58,32 +52,52 @@ std::vector<std::string> Utility::tokenizeString(const std::string& str, const s
 	}
 	return tokens;
 }
-void Utility::writeFile(std::shared_ptr<Assembler> a, std::string fileName)
+void Utility::writeFile(std::string fileName)
 {
     std::ofstream outFile(fileName);
+    auto a = Assembler::getInstace();
+    std::string output = "###### SECTION TABLE ######\n";
+    output += "\t\tINDEX\tNAME\tLOC\t\tBEGIN\tEND\n";
 
-    std::string output = "#TableOfSections\n";
-    output += a->sectionTable.to_string();
-    
-	output += "#TableOfSymbols\n";
-	a->symbolTable.insert(std::shared_ptr<Symbol>(nullptr));
+    for (auto section : a->sectionTable)
+    {
+        output += section->to_string() + '\n';
+    }
+	output += "###### SYMBOL TABLE ######\n";
+    output += "\t\tINDEX\tNAME\tSECTION\t\tOFFSET\tSCOPE\n";
     for (auto symbol : a->symbolTable)
     {
         if(!symbol->isSection()){
             output += symbol->to_string() +"\n";
         }
     }
-    /**for(auto &section: Utility::secTable){
-        auto table = section->getTable();
-        if(table.size()){
-            output+="#rel" + section->getName()+"\n";
-        } 
-        for(auto &entry:section->getTable())
+    output += "###### RELOCATION TABLE ######\n";
+    output += "\t\tSECTION\t\tINDEX\tTYPE\tOFFSET\n";
+    for(auto &section : a->sectionTable){
+        auto relTable = section->getTable();
+        for(auto entry : relTable->getTable())
         {
-            output+= entry.to_string() +"\n";
+            output += "REL:\t" + section->getName() + "\t" + entry->to_string() + "\n";
         }
-        output += section->to_string_data()+"\n";
-    }**/
+    }
+    output += "###### CODE ######\n";
+    int i = 0;
+    for(auto &instruction : a->codeSegment)
+    {
+        std::stringstream ss;
+        for(auto &word : instruction)
+        {
+            if(word <= 0xf) ss << std::hex << 0;
+            ss << std::hex << static_cast<int>(word) << " ";
+        }
+        ss << "|";
+        i++;
+        if((i % 3)== 0)
+        {
+            ss << "\n";
+        }
+        output += ss.str();
+    }
     outFile << output;
     outFile.close();
 }
@@ -100,13 +114,27 @@ void Utility::updateGlobal(std::vector<std::string>& line)
 		if (word2 == ".global") global = true;
 	}
 }
+bool Utility::isNumber(std::string& s)
+{
+    std::string::const_iterator it = s.begin();
+    while (it != s.end() && std::isdigit(*it)) ++it;
+    return !s.empty() && it == s.end();
+}
 
 //Register Regex
-std::regex Utility::register_regex("^(R([0-9]||1[0-5])||SP||PC||PSW)$");
-std::regex Utility::regindpom_regex("^\\[(R([0-9]||1[0-5])||PC||SP) *(\\+||\\-) *(0x||0b)?[a-zA-z0-9]+\\]$");
-std::regex Utility::regind_regex("^\\[(R([0-9]||1[0-5])||PC||SP)\\]$");
-std::regex Utility::immed_regex("^#([0-9A-F]+||[a-zA-z][a-zA-Z0-9]*)");
-std::regex Utility::memdir_regex("^\\$?[a-zA-Z][a-zA-Z0-9]*$");
+std::regex Utility::immed_regex_value("([0-9A-F]*)");
+
+std::regex Utility::immed_regex_simbol("\\&(\\w*)");
+
+std::regex Utility::register_regex("^(r([0-9]||1[0-5])||sp||pc||psw)$");
+std::regex Utility::regind_regex("^\\[(r([0-9]||1[0-5])||pc||sp)\\]$");
+std::regex Utility::regindpom_regex("^r(([0-9]||1[0-5])||pc||sp)\\[[0-9A-F]*\\]$");
+
+std::regex Utility::regindpom_regex_simbol("^(r([0-9]||1[0-5])||pc||sp)\\[([a-zA-Z]*)\\]$");
+std::regex Utility::pc_relative_regex_simbol("\\$(\\w*)");
+std::regex Utility::abs_regex_simbol("([a-zA-Z]*)");
+
+std::regex Utility::memdir_regex("\\*([0-9A-F]+||[a-zA-z][a-zA-Z0-9]*)");
 
 //Instruction Regex
-std::regex Utility::instruction_regex("(INT|ADD|SUB|MUL|MOV|DIV|CMP|AND|OR|NOT|TEST|XOR|XCHG|CALL|SHR|SHL|HALT|RET|IRET|POP|PUSH|JMP|JEQ|JNE|JGT)(B|W)?");
+std::regex Utility::instruction_regex("(int|add|sub|mul|mov|div|cmp|and|or|not|test|xor|xcfg|call|shr|shl|halt|ret|iret|pop|push|jmp|jeq|jne|jgt)(b|w)?");

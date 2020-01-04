@@ -25,6 +25,5 @@ public:
 
     static uint8_t checkInstruction(std::string op, std::vector<std::string> line);
     static Instruction constructInstruction(std::vector<std::string> inst);
-    static uint32_t constructSecountWord(std::vector<std::string> inst, std::shared_ptr<Section> currentSection);
 };
 #endif

@@ -71,6 +71,9 @@
         "string_view": "cpp",
         "iomanip": "cpp",
         "shared_mutex": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "concepts": "cpp",
+        "list": "cpp",
+        "xhash": "cpp"
     }
 }

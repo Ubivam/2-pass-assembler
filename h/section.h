@@ -2,6 +2,7 @@
 #define SECTION_H
 
 #include "../h/macros.h"
+#include <memory>
 #include "../h/def.h"
 
 class Section
@@ -14,7 +15,9 @@ public:
     void resetLocationCounter();
 
     void appendData(uint32_t value, uint8_t size, bool firstWord = true);
-	void saveAndResetLocationCounter(std::shared_ptr<RelocationEntry>& entry);
+	void saveAndResetLocationCounter();
+
+    void insertRealocationEntry(std::shared_ptr<RelocationEntry>& entry);
 
 public:
     std::string getName() const;
@@ -22,7 +25,7 @@ public:
     uint32_t getBeginLocationCounter() const;
     std::vector<uint8_t> getData() const;
     uint32_t getIndex() const;
-    RelocationTable &getTable() const;
+    std::shared_ptr<RelocationTable>  getTable();
 
     std::string to_string() const;
     std::string to_string_data() const;
@@ -36,6 +39,6 @@ private:
     std::vector<uint8_t> _data;
     uint32_t _index;
 	std::string _flags;
-	RelocationTable _table;
+	std::shared_ptr<RelocationTable> _table;
 };
 #endif

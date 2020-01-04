@@ -2,8 +2,10 @@
 #define MNEMONIC_H
 
 #include <unordered_map>
+#include <string>
 #include "../h/def.h"
 #include "../h/macros.h"
+#include "../h/utility.h"
 
 class Mnemonic
 {
@@ -15,10 +17,10 @@ public:
 	bool isValid(uint8_t mode) const;
 
 public:
-	static uint8_t getInstructionSize(uint8_t mode, uint8_t code, bool is_byte_size, bool signle_operand);
+	static uint8_t getInstructionSize(uint8_t addr_mode1, uint8_t addr_mode2, uint8_t code, bool is_byte_size, uint16_t immed_value, bool is_single);
 	static uint8_t getRegisterCode(std::string reg);
 	static uint16_t getRegisterValue(std::string reg);
-	static uint8_t getRegisterIndCode(std::string reg);
+	static std::string getRegisterSymbol(std::string reg);
 
 public:
 	uint8_t getCode() const;

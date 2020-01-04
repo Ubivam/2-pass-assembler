@@ -8,12 +8,19 @@
 #define PRINT(a) std::cout<<a<<std::endl
 #define READ(a) std::cin>>a
 
+//Tipovi adresiranja
 #define IMMED 0x0
 #define REGDIR 0x1
 #define REGIND 0x2
-#define REGINDPOM8 0x3
+#define REGINDPOM 0x3
 #define REGINDPOM16 0x4
 #define MEMDIR 0x5
+
+//Pomocni tipovi adresiranja
+#define IMMED_SYM 0x6
+#define REGINDPOM_SYM 0x7
+#define PC_RELATIVE_SYM 0x8
+#define ABS_SYM 0x9
 
 #define ALU_INSTRUCTION 0
 #define JMP_INSTRUCTION 1
@@ -26,7 +33,9 @@
 #define IS_SECTION true
 #define NOT_SECTION false
 
+//Apsolutna adresa za realokaciju simbola stavlja 32 bitnu adresu simbola u memorijsku lokaciju
 #define R_386_32 true
+//PC Relativna adresa za realokaciju simbola stavlja 32 bitnu realtivnu adresu simbola u memorijsku lokaciju
 #define R_386_PC32 false
 
 #endif

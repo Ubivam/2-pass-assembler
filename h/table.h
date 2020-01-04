@@ -15,6 +15,7 @@ public:
     Table()
     {
     }
+    
     Table(const Table &t)
     {
         _table = t->getTable();

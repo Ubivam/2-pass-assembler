@@ -5,10 +5,9 @@
 #include "../h/def.h"
 #include "../h/macros.h"
 
-RelocationEntry::RelocationEntry(uint32_t offset, RelocationType type, uint32_t index):
-_offset(offset),
-_type (type),
-_index (index)
+RelocationEntry::RelocationEntry(uint32_t offset, RelocationType type, uint32_t index) : _offset(offset),
+																						 _type(type),
+																						 _index(index)
 {
 }
 
@@ -16,15 +15,15 @@ std::string RelocationEntry::to_string() const
 {
 	std::stringstream stream;
 	std::string type = (_type == R_386_32) ? "ABS" : "REL";
-	stream << "0x" << std::uppercase << std::hex << _offset << " " << type << " " << std::dec << _index;
+	stream << std::dec << _index  << "\t\t" << type << "\t\t" << "0x0" << std::uppercase << std::hex << _offset;
 	auto s = stream.str();
 	return s;
 }
 
-#endif
-
-std::ostream& operator<<(std::ostream& os, RelocationEntry& entry)
+std::ostream &operator<<(std::ostream &os, RelocationEntry &entry)
 {
 	os << entry.to_string();
 	return os;
 }
+
+#endif

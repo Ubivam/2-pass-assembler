@@ -1,0 +1,6 @@
+﻿  assember.cpp
+C:\Users\Nordeus06\Desktop\2-pass-assembler\src\assember.cpp(89,24): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Nordeus06\Desktop\2-pass-assembler\src\assember.cpp(103,24): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Nordeus06\Desktop\2-pass-assembler\src\assember.cpp(257,24): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Nordeus06\Desktop\2-pass-assembler\src\assember.cpp(271,24): warning C4018: '<': signed/unsigned mismatch
+  SS_test.vcxproj -> C:\Users\Nordeus06\Desktop\2-pass-assembler\SS_test\Debug\SS_test.exe

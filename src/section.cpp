@@ -10,6 +10,7 @@ Section::Section(std::string name, uint32_t index, uint32_t locCounter)
       _endLocCouter(locCounter),
       _locCounter(locCounter)
 {
+    _table = std::make_shared<RelocationTable>();
 }
 void Section::incLocationCounter(uint32_t amount)
 {
@@ -41,6 +42,15 @@ void Section::appendData(uint32_t value, uint8_t size, bool firstWord)
     }
     _locCounter += size;
 }
+void Section::saveAndResetLocationCounter()
+{
+    _endLocCouter = _locCounter;
+    _locCounter = _beginLocCounter;
+}
+void Section::insertRealocationEntry(std::shared_ptr<RelocationEntry>& entry)
+{
+    _table->insert(entry);
+}
 std::string Section::getName() const
 {
     return _stringName;
@@ -65,13 +75,30 @@ uint32_t Section::getIndex() const
 std::string Section::to_string() const
 {
     std::stringstream stream;
-    stream << "0x" << std::uppercase << std::hex << _beginLocCounter;
+    stream << "0x0" << std::uppercase << std::hex << _beginLocCounter;
     auto begin = stream.str();
 
     stream.str(std::string());
 
-    stream << "0x" << std::uppercase << std::hex << _endLocCouter - _beginLocCounter;
+    stream << "0x0" << std::uppercase << std::hex << _endLocCouter - _beginLocCounter;
     auto end = stream.str();
 
-    return "SEG" + std::to_string(_index) + " " + _stringName + " " + std::to_string(_index) + " " + begin + " " + end;
+     stream.str(std::string());
+
+     stream << "0x0" <<  std::uppercase << std::hex << _locCounter;
+     auto loc = stream.str();
+
+    return "SEG:\t" + std::to_string(_index) + "\t" + _stringName + "\t" + loc + "\t" + begin + "\t" + end;
+}
+std::string Section::to_string_data() const
+{
+    return std::string();
+}
+std::string Section::to_string_table() const
+{
+    return std::string();
+}
+std::shared_ptr<RelocationTable> Section::getTable()
+{
+    return _table;
 }

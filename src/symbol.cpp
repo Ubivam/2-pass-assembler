@@ -37,6 +37,10 @@ std::shared_ptr<Section> Symbol::getSection() const
 {
 	return _section;
 }
+bool Symbol::isLocal() const
+{
+	return _local;
+}
 bool Symbol::isSection() const
 {
 	return _isSection;
@@ -45,19 +49,23 @@ uint32_t Symbol::getIndex() const
 {
 	return _index;
 }
+uint32_t Symbol::getOffset() const
+{
+	return _offset;
+}
 std::string Symbol::to_string() const
 {
 	std::stringstream stream;
-	stream << "0x" << std::uppercase << std::hex << _offset;
+	stream << "0x0" << std::uppercase << std::hex << _offset;
 	std::string value(stream.str());
 	if (_section != nullptr)
 	{
-		std::string index = std::to_string(_section->getIndex());
-		return "SYM" + std::to_string(_index) + " " + _name + " " + index + " " + value + " " + (_local ? "L" : "G");
+		std::string section = _section->getName();
+		return "SYM:\t" + std::to_string(_index) + "\t\t" + _name + "\t\t" + section + "\t" + value + "\t" + (_local ? "L" : "G");
 	}
 	else
 	{
-		return "SYM" + std::to_string(_index) + _name + " " + "NULL" + " " + value + " " + (_local ? "L" : "G");
+		return "SYM:\t" + std::to_string(_index) + "\t\t" + _name + "\t\t" + "NULL" + "\t\t" + value + "\t" + (_local ? "L" : "G");
 	}
 }
 std::ostream& operator<<(std::ostream & os, const Symbol & symbol)
