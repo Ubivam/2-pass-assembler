@@ -11,6 +11,21 @@ RelocationEntry::RelocationEntry(uint32_t offset, RelocationType type, uint32_t 
 {
 }
 
+uint32_t RelocationEntry::getOffset() const
+{
+	return _offset;
+}
+
+RelocationType RelocationEntry::getType() const
+{
+	return _type;
+}
+
+uint32_t RelocationEntry::getIndex() const
+{
+	return _index;
+}
+
 std::string RelocationEntry::to_string() const
 {
 	std::stringstream stream;

@@ -12,7 +12,7 @@
 SymbolTable Assembler::symbolTable;
 SectionTable Assembler::sectionTable;
 Code Assembler::codeSegment;
-std::shared_ptr<Assembler> Assembler::mInstance = std::shared_ptr<Assembler>(nullptr);
+std::weak_ptr<Assembler> Assembler::mInstance;
 
 Assembler::Assembler()
 {
@@ -20,11 +20,13 @@ Assembler::Assembler()
 
 std::shared_ptr<Assembler> Assembler::getInstace()
 {
-	if(mInstance == nullptr)
+	if(auto ptr = mInstance.lock()) //lock() returns a shared_ptr and increments ref count
 	{
-		mInstance = std::make_shared<Assembler>();
+		return ptr;
 	}
-	return mInstance;
+	auto ptr = std::shared_ptr<Assembler>(new Assembler());
+	mInstance = ptr;
+	return ptr;
 }
 
 //Prvi prolaz koristimo kako bismo popunili tabelu simbola
@@ -75,7 +77,7 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
 				{
 					symbol = std::make_shared<Symbol>(symbolName, currentSection, 0 , NOT_SECTION, GLOBAL_SYMBOL);
 				}
-				symbol = std::make_shared<Symbol>(symbolName, currentSection, currentSection->getBeginLocationCounter(), NOT_SECTION, LOCAL_SYMBOL);
+				symbol = std::make_shared<Symbol>(symbolName, currentSection, currentSection->getLocationCounter(), NOT_SECTION, LOCAL_SYMBOL);
 				symbol->setIndex(uint16_t(symbolTable.size()) + 1);
 				symbol->setOffset(value);
 
@@ -118,7 +120,7 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
 					return false;
 				}
 				uint16_t val = (uint16_t)(std::stoi((*(&word + 1))));
-				while (((currentSection->getLocationCounter() -1) % val) != 0)
+				while (((currentSection->getLocationCounter()) % val) != 0)
 				{
 					currentSection->incLocationCounter(1);
 				}
@@ -144,7 +146,7 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
 				}
 				auto label = word.substr(0, word.length() - 1);
 				auto symbol = std::make_shared<Symbol>(label, currentSection, currentSection->getLocationCounter() - currentSection->getBeginLocationCounter());
-				symbol->setIndex(uint16_t(symbolTable.size()));
+				symbol->setIndex(uint16_t(symbolTable.size()) + 1);
 				symbolTable.insert(symbol);
 				continue;
 			}
@@ -224,12 +226,13 @@ bool Assembler::secoundPass(ArrayOfStrings &instructions)
 				if (currentSection != nullptr)
 				{
 					uint16_t val = (uint16_t) (std::stoi((*(&word + 1))));
-					while (((currentSection->getLocationCounter() -1) % val) != 0)
+					while (((currentSection->getLocationCounter()) % val) != 0)
 					{
 						currentSection->incLocationCounter(1);
 						Instruction ins;
 						ins.push_back(0x00);
 						codeSegment.push_back(ins);
+						currentSection->inserInstruction(ins);
 					}
 					continue;
 				}
@@ -247,6 +250,7 @@ bool Assembler::secoundPass(ArrayOfStrings &instructions)
 						ins.push_back(0x00);
 					}
 					codeSegment.push_back(ins);
+					currentSection->inserInstruction(ins);
 				}
 				continue;
 			}
@@ -256,10 +260,11 @@ bool Assembler::secoundPass(ArrayOfStrings &instructions)
 				{
 					for (int i = 1; i < line.size(); i++)
 					{
-						currentSection->incLocationCounter(2);
+						currentSection->incLocationCounter(1);
 						Instruction ins;
 						ins.push_back(0x00);
 						codeSegment.push_back(ins);
+						currentSection->inserInstruction(ins);
 					}
 				}
 				continue;
@@ -275,6 +280,7 @@ bool Assembler::secoundPass(ArrayOfStrings &instructions)
 						ins.push_back(0x00);
 						ins.push_back(0x00);
 						codeSegment.push_back(ins);
+						currentSection->inserInstruction(ins);
 					}
 				}
 				continue;
@@ -297,6 +303,7 @@ bool Assembler::secoundPass(ArrayOfStrings &instructions)
 				auto binary_instruction = OperationalCodeTable::constructInstruction(instruction);
 
 				codeSegment.push_back(binary_instruction);
+				currentSection->inserInstruction(binary_instruction);
 			}
 		}
 	}

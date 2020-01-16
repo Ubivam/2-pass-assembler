@@ -13,6 +13,7 @@ class Utility
 public:
     static bool readFile(std::string fileName, ArrayOfStrings &instructions);
     static void writeFile(std::string fileName);
+    static void writeBinFile(std::string fileName);
 	static void updateGlobal(std::vector<std::string> & line);
     static bool isNumber(std::string& s);
 public:

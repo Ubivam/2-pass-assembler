@@ -33,6 +33,8 @@ int main(int argc, char *argv[])
                 return -1;
         }
         Utility::writeFile(argv[2]);
+        if(argc == 4)
+        Utility::writeBinFile(argv[3]);
         PRINT("Both passes succesfully passed!");
         return 0;
 }

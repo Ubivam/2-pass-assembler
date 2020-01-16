@@ -14,7 +14,7 @@ public:
 
     void resetLocationCounter();
 
-    void appendData(uint32_t value, uint8_t size, bool firstWord = true);
+    void inserInstruction(Instruction inst);
 	void saveAndResetLocationCounter();
 
     void insertRealocationEntry(std::shared_ptr<RelocationEntry>& entry);
@@ -23,7 +23,8 @@ public:
     std::string getName() const;
     uint32_t getLocationCounter() const;
     uint32_t getBeginLocationCounter() const;
-    std::vector<uint8_t> getData() const;
+    uint32_t getEndLocationCounter() const;
+    Code getData() const;
     uint32_t getIndex() const;
     std::shared_ptr<RelocationTable>  getTable();
 
@@ -36,7 +37,7 @@ private:
     uint32_t _beginLocCounter;
     uint32_t _locCounter;
     uint32_t _endLocCouter;
-    std::vector<uint8_t> _data;
+    Code _data;
     uint32_t _index;
 	std::string _flags;
 	std::shared_ptr<RelocationTable> _table;

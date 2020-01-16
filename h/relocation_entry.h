@@ -13,6 +13,10 @@ private:
 	uint32_t _index;
 public:
 	RelocationEntry(uint32_t offset, RelocationType type, uint32_t index);
+	
+	uint32_t getOffset() const;
+	RelocationType getType() const;
+	uint32_t getIndex() const;
 
 	friend std::ostream& operator <<(std::ostream& os, RelocationEntry& entry);
 	std::string to_string() const;

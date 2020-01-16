@@ -82,24 +82,108 @@ void Utility::writeFile(std::string fileName)
     }
     output += "###### CODE ######\n";
     int i = 0;
-    for(auto &instruction : a->codeSegment)
+    for (auto& section : a->sectionTable)
     {
-        std::stringstream ss;
-        for(auto &word : instruction)
+        for (auto& instruction : section->getData())
         {
-            if(word <= 0xf) ss << std::hex << 0;
-            ss << std::hex << static_cast<int>(word) << " ";
+            std::stringstream ss;
+            for (auto& word : instruction)
+            {
+                if (word <= 0xf) ss << std::hex << 0;
+                ss << std::hex << static_cast<int>(word) << " ";
+            }
+            ss << "|";
+            i++;
+            if ((i % 3) == 0)
+            {
+                ss << "\n";
+            }
+            output += ss.str();
         }
-        ss << "|";
-        i++;
-        if((i % 3)== 0)
-        {
-            ss << "\n";
-        }
-        output += ss.str();
     }
     outFile << output;
     outFile.close();
+}
+
+void Utility::writeBinFile(std::string fileName)
+{
+    std::ofstream outFile(fileName, std::ofstream::binary);
+    auto a = Assembler::getInstace();
+    uint32_t size = 0;
+    auto & sec_table = a->sectionTable;
+    size = sec_table.size();
+    outFile.write(reinterpret_cast<char *>(&size), sizeof(size));
+    uint32_t str_size;
+    std::string name;
+    for(auto &sec : sec_table)
+    {    
+        std::string  name = sec->getName();
+        str_size = name.size();
+        outFile.write(reinterpret_cast<char *>(&str_size), sizeof(uint32_t));
+        outFile.write(&name[0], str_size);
+        uint32_t index = sec->getIndex();
+        outFile.write(reinterpret_cast<char*>(&index),sizeof(uint32_t));
+        uint32_t begin_loc = sec->getBeginLocationCounter();
+        outFile.write(reinterpret_cast<char*>(&begin_loc), sizeof(uint32_t));
+        uint32_t end_loc = sec->getEndLocationCounter();
+        outFile.write(reinterpret_cast<char*>(&end_loc), sizeof(uint32_t));
+        
+        std::shared_ptr<RelocationTable> real_tab =  sec->getTable();
+        uint32_t realoc_size = real_tab->size();
+        outFile.write(reinterpret_cast<char*>(&realoc_size), sizeof(uint32_t));
+        for(auto reloc : real_tab->getTable())
+        {
+            uint32_t rel_ind = reloc->getIndex();
+            outFile.write(reinterpret_cast<char*>(&rel_ind), sizeof(uint32_t));
+            uint32_t rel_off = reloc->getOffset();
+            outFile.write(reinterpret_cast<char*>(&rel_off), sizeof(uint32_t));
+            RelocationType rel_type = reloc->getType();
+            outFile.write(reinterpret_cast<char*>(&rel_type), sizeof(RelocationType));
+        } 
+        Code section_code = sec->getData();
+        size = section_code.size();
+        outFile.write(reinterpret_cast<char*>(&size), sizeof(size));
+        for (auto inst : section_code)
+        {
+            uint32_t size_of_instruction = inst.size();
+            outFile.write(reinterpret_cast<char*>(&size_of_instruction), sizeof(size_of_instruction));
+            for (auto word : inst)
+            {
+                outFile.write(reinterpret_cast<char*>(&word), sizeof(word));
+            }
+
+        }
+    }
+    auto & symb_table = a->symbolTable;
+    size = symb_table.size();
+    outFile.write(reinterpret_cast<char *>(&size), sizeof(size));
+    for(auto &symb : symb_table)
+    {
+        name = symb->getName();
+        str_size = name.size();
+        outFile.write(reinterpret_cast<char *>(&str_size), sizeof(uint32_t));
+        outFile.write(&name[0], str_size);
+        uint32_t index = symb->getIndex();
+        outFile.write(reinterpret_cast<char*>(&index),sizeof(uint32_t));
+        uint32_t offset = symb->getOffset();
+        outFile.write(reinterpret_cast<char*>(&offset),sizeof(uint32_t));
+        bool local = symb->isLocal();
+        outFile.write(reinterpret_cast<char*>(&local),sizeof(bool));
+        bool isSection = symb->isSection();
+        outFile.write(reinterpret_cast<char*>(&isSection),sizeof(bool));
+        std::string section_name; 
+        if(symb->getSection() != nullptr)
+        {
+            section_name = symb->getSection()->getName();
+        }
+        else
+        {
+            section_name = "NULL";
+        }
+        str_size = section_name.size();
+        outFile.write(reinterpret_cast<char *>(&str_size), sizeof(uint32_t));
+        outFile.write(&section_name[0], str_size);
+    }
 }
 void Utility::updateGlobal(std::vector<std::string>& line) 
 {

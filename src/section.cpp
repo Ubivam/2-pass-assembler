@@ -20,27 +20,9 @@ void Section::resetLocationCounter()
 {
     _locCounter = 0;
 }
-void Section::appendData(uint32_t value, uint8_t size, bool firstWord)
+void Section::inserInstruction(Instruction inst)
 {
-    if (firstWord)
-    {
-        auto shiftBy = 24;
-        while (shiftBy >= 0)
-        {
-            auto byte = value >> shiftBy;
-            _data.push_back(uint8_t(byte));
-            shiftBy -= 8;
-        }
-    }
-    else
-    {
-        for (auto i = 0; i < size; i++)
-        {
-            _data.push_back(uint8_t(value));
-            value >>= 8;
-        }
-    }
-    _locCounter += size;
+    _data.push_back(inst);
 }
 void Section::saveAndResetLocationCounter()
 {
@@ -63,7 +45,11 @@ uint32_t Section::getBeginLocationCounter() const
 {
     return _beginLocCounter;
 }
-std::vector<uint8_t> Section::getData() const
+uint32_t Section::getEndLocationCounter() const
+{
+    return _endLocCouter;
+}
+Code Section::getData() const
 {
     return _data;
 }

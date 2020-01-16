@@ -15,7 +15,7 @@ add r2, r1[b]
 s:
 sub r1, r2
    jmp s
-   jmp 20
+   jmp b
 .text_zma
 mul r1, 2
 e:

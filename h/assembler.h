@@ -14,13 +14,12 @@ public:
    static Code codeSegment;
 
 private:
-    static std::shared_ptr<Assembler> mInstance; 
+    static std::weak_ptr<Assembler> mInstance; 
     bool end = false;
 
 public:
     std::shared_ptr<Section> currentSection;
 public:
-    Assembler();
     static std::shared_ptr<Assembler> getInstace();
    
     //Analysis Phase
@@ -28,7 +27,8 @@ public:
     void analizeUndefined();
     //Synthesis Phase
     bool secoundPass(ArrayOfStrings &instruction);
-
+private:
+    Assembler();
 };
 
 #endif

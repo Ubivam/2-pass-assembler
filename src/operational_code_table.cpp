@@ -195,8 +195,6 @@ void OperationalCodeTable::init()
     _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x15, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16, JMP_INSTRUCTION, 0, true)));
     instruction = "jgt";
     _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x16, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16, JMP_INSTRUCTION, 0, true)));
-    instruction = "jmp";
-    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x16, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16, JMP_INSTRUCTION, 0, true)));
     instruction = "call";
     _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x17, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16, JMP_INSTRUCTION, 0, true)));
     instruction = "ret";

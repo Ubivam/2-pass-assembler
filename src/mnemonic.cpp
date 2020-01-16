@@ -339,14 +339,14 @@ Instruction Mnemonic::constructInstruction(std::vector<std::string> inst) const
 			{
 				foundSymb = true;
 				std::shared_ptr<RelocationEntry> entry;
-				auto isAbsRealocationType = !(_code == 19 || _code == 20 || _code == 21 || _code == 22);
+				auto isAbsRealocationType = (_code == 19 || _code == 20 || _code == 21 || _code == 22);
 				if (!symbol->isLocal())
 				{
-					entry = std::make_shared<RelocationEntry>(as->currentSection->getLocationCounter(), isAbsRealocationType, symbol->getIndex());
+					entry = std::make_shared<RelocationEntry>(as->currentSection->getLocationCounter() - 2, isAbsRealocationType, symbol->getIndex());
 				}
 				else
 				{
-					entry = std::make_shared<RelocationEntry>(as->currentSection->getLocationCounter(), isAbsRealocationType, symbol->getSection()->getIndex());
+					entry = std::make_shared<RelocationEntry>(as->currentSection->getLocationCounter() - 2, isAbsRealocationType, symbol->getSection()->getIndex());
 				}
 				if (entry)
 				{
@@ -354,19 +354,19 @@ Instruction Mnemonic::constructInstruction(std::vector<std::string> inst) const
 				}
 				//Value generation
 				uint16_t value;
-				if ((symbol->isLocal()) && isAbsRealocationType)
+				if ((symbol->isLocal()) && !isAbsRealocationType)
 				{
 					value = (uint16_t)symbol->getOffset();
 				}
-				if (!(symbol->isLocal()) && isAbsRealocationType)
+				if (!(symbol->isLocal()) && !isAbsRealocationType)
 				{
 					value = 0x0000;
 				}
-				if (!(symbol->isLocal()) && !isAbsRealocationType)
+				if (!(symbol->isLocal()) && isAbsRealocationType)
 				{
 					value = 0xFFFC;
 				}
-				if ((symbol->isLocal()) && !isAbsRealocationType)
+				if ((symbol->isLocal()) && isAbsRealocationType)
 				{
 					value = 0x0004;
 				}
@@ -479,14 +479,14 @@ Instruction Mnemonic::constructInstruction(std::vector<std::string> inst) const
 				{
 					foundSymb = true;
 					std::shared_ptr<RelocationEntry> entry;
-					auto isAbsRealocationType = !(_code == 19 || _code == 20 || _code == 21 || _code == 22);
+					auto isAbsRealocationType = (_code == 19 || _code == 20 || _code == 21 || _code == 22);
 					if (!symbol->isLocal())
 					{
-						entry = std::make_shared<RelocationEntry>(as->currentSection->getLocationCounter(), isAbsRealocationType, symbol->getIndex());
+						entry = std::make_shared<RelocationEntry>(as->currentSection->getLocationCounter() -2 , isAbsRealocationType, symbol->getIndex());
 					}
 					else
 					{
-						entry = std::make_shared<RelocationEntry>(as->currentSection->getLocationCounter(), isAbsRealocationType, symbol->getSection()->getIndex());
+						entry = std::make_shared<RelocationEntry>(as->currentSection->getLocationCounter() -2, isAbsRealocationType, symbol->getSection()->getIndex());
 					}
 					if (entry)
 					{
@@ -494,19 +494,19 @@ Instruction Mnemonic::constructInstruction(std::vector<std::string> inst) const
 					}
 					//Value generation
 					uint16_t value;
-					if ((symbol->isLocal()) && isAbsRealocationType)
+					if ((symbol->isLocal()) && !isAbsRealocationType)
 					{
 						value = (uint16_t)symbol->getOffset();
 					}
-					if (!(symbol->isLocal()) && isAbsRealocationType)
+					if (!(symbol->isLocal()) && !isAbsRealocationType)
 					{
 						value = 0x0000;
 					}
-					if (!(symbol->isLocal()) && !isAbsRealocationType)
+					if (!(symbol->isLocal()) && isAbsRealocationType)
 					{
 						value = 0xFFFC;
 					}
-					if ((symbol->isLocal()) && !isAbsRealocationType)
+					if ((symbol->isLocal()) && isAbsRealocationType)
 					{
 						value = 0x0004;
 					}
