@@ -102,7 +102,10 @@ uint8_t OperationalCodeTable::checkInstruction(std::string op, std::vector<std::
 {
     auto mneumonic = std::find_if(std::begin(_map), std::end(_map), [&](auto inst) { return inst.first == op; });
     auto instruction = OperationalCodeTable::getInstruction(op, line);
-
+    if(mneumonic->second->getCode() == 0x01 || mneumonic->second->getCode() == 0x018 || mneumonic->second->getCode() == 0x019) 
+    {
+        return 1;
+    }
     if (line.size() < 2)
     {
         PRINT("Los broj argumenata kod operacije: " + line[0]);

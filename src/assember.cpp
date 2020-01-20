@@ -93,7 +93,20 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
 						currentSection->incLocationCounter(1);
 						auto symbol = std::make_shared<Symbol>(line[i], currentSection, currentSection->getLocationCounter());
 						symbol->setIndex(uint16_t(symbolTable.size()) + 1);
-						symbolTable.insert(symbol);
+						bool exists = false;
+						for (auto sym : symbolTable)
+						{
+							if (sym->getName() == line[i])
+							{
+								sym->setSection(currentSection);
+								sym->setOffset(currentSection->getLocationCounter());
+								exists = true;
+							}
+						}
+						if (!exists)
+						{
+							symbolTable.insert(symbol);
+						}
 					}
 				}
 				continue;
@@ -107,7 +120,20 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
 						currentSection->incLocationCounter(2);
 						auto symbol = std::make_shared<Symbol>(line[i], currentSection, currentSection->getLocationCounter());
 						symbol->setIndex(uint16_t(symbolTable.size()) + 1);
-						symbolTable.insert(symbol);
+						bool exists = false;
+						for (auto sym : symbolTable)
+						{
+							if (sym->getName() == line[i])
+							{
+								sym->setSection(currentSection);
+								sym->setOffset(currentSection->getLocationCounter());
+								exists = true;
+							}
+						}
+						if (!exists)
+						{
+							symbolTable.insert(symbol);
+						}
 					}
 				}
 				continue;
@@ -147,7 +173,20 @@ bool Assembler::firstPass(ArrayOfStrings &instructions)
 				auto label = word.substr(0, word.length() - 1);
 				auto symbol = std::make_shared<Symbol>(label, currentSection, currentSection->getLocationCounter() - currentSection->getBeginLocationCounter());
 				symbol->setIndex(uint16_t(symbolTable.size()) + 1);
-				symbolTable.insert(symbol);
+				bool exists = false;
+				for (auto sym : symbolTable)
+				{
+					if (sym->getName() == label)
+					{
+						sym->setSection(currentSection);
+						sym->setOffset(currentSection->getLocationCounter() - currentSection->getBeginLocationCounter());
+						exists = true;
+					}
+				}
+				if (!exists)
+				{
+					symbolTable.insert(symbol);
+				}
 				continue;
 			}
 			// Proveravamo da li je data rec sekcija (Gore smo prosli sve slucajeve za direktive tako da izraz koji pocinje sa tackom mora da bude sekcija)

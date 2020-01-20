@@ -13,6 +13,7 @@ public: //SETTERS
     void setLocal(bool local);
     void setIndex(uint32_t index);
     void setOffset(uint32_t _offset);
+    void setSection(std::shared_ptr<Section> section);
 
 public: //GETTERS
     std::string getName() const;

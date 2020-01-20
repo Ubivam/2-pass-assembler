@@ -1,4 +1,5 @@
 .global b,k
+.extern l
 .text_main
 .word ana pet zeh iht
 .byte ruk
@@ -8,16 +9,16 @@
 a:
 mul r3, 1442
 push g
-b:
+l:
 div r5, r2[a]
-add r2, r1[b]
+add r2, r1[l]
 .align 16
 s:
 sub r1, r2
    jmp s
-   jmp b
+   jmp l
 .text_zma
-mul r1, 2
+mul r1, 33
 e:
 xor r1, e
 .end

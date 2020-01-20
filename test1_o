@@ -1,0 +1,17 @@
+###### SECTION TABLE ######
+		INDEX	NAME	LOC		BEGIN	END
+SEG:	3	.text.main	0x016	0x00	0x016
+SEG:	4	.data	0x010	0x00	0x010
+###### SYMBOL TABLE ######
+		INDEX	NAME	SECTION		OFFSET	SCOPE
+SYM:	1		e		NULL		0x00	G
+SYM:	2		p		.data	0x0E	G
+SYM:	5		a		.data	0x0C	L
+SYM:	6		c		.data	0x010	L
+###### RELOCATION TABLE ######
+		SECTION		INDEX	TYPE	OFFSET
+REL:	.text.main	1		ABS		0x03
+###### CODE ######
+24 22 a0 00 00 |2c 22 00 16 |34 22 00 03 |
+3c 22 00 0a |4c 26 80 ff ff |00 00 00 00 00 00 00 00 00 00 |
+00 00 |00 00 |00 00 |

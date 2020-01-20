@@ -29,6 +29,10 @@ void Symbol::setOffset(uint32_t offset)
 {
 	_offset = offset;
 }
+void Symbol::setSection(std::shared_ptr<Section> section)
+{
+	this->_section = section;
+}
 std::string Symbol::getName() const
 {
 	return _name;

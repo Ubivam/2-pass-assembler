@@ -1,36 +1,36 @@
 ###### SECTION TABLE ######
 		INDEX	NAME	LOC		BEGIN	END
-SEG:	3	.text_main	0x03B	0x00	0x03B
+SEG:	4	.text_main	0x03B	0x00	0x03B
 SEG:	13	.text_zma	0x09	0x00	0x09
 ###### SYMBOL TABLE ######
 		INDEX	NAME	SECTION		OFFSET	SCOPE
 SYM:	1		b		NULL		0x00	G
 SYM:	2		k		NULL		0x00	G
-SYM:	4		ana		.text_main	0x02	L
-SYM:	5		pet		.text_main	0x04	L
-SYM:	6		zeh		.text_main	0x06	L
-SYM:	7		iht		.text_main	0x08	L
-SYM:	8		ruk		.text_main	0x09	L
-SYM:	9		g		.text_main	0x021	L
-SYM:	10		a		.text_main	0x016	L
-SYM:	11		b		.text_main	0x01F	L
+SYM:	3		l		.text_main	0x01F	G
+SYM:	5		ana		.text_main	0x02	L
+SYM:	6		pet		.text_main	0x04	L
+SYM:	7		zeh		.text_main	0x06	L
+SYM:	8		iht		.text_main	0x08	L
+SYM:	9		ruk		.text_main	0x09	L
+SYM:	10		g		.text_main	0x021	L
+SYM:	11		a		.text_main	0x016	L
 SYM:	12		s		.text_main	0x030	L
 SYM:	14		e		.text_zma	0x04	L
 ###### RELOCATION TABLE ######
 		SECTION		INDEX	TYPE	OFFSET
-REL:	.text_main	3		REL		0x01D
-REL:	.text_main	3		REL		0x022
-REL:	.text_main	1		REL		0x027
-REL:	.text_main	3		ABS		0x035
-REL:	.text_main	1		ABS		0x039
-REL:	.text_zma	13		REL		0x07
+REL:	.text_main	10		ABS		0x01D
+REL:	.text_main	11		REL		0x022
+REL:	.text_main	3		REL		0x027
+REL:	.text_main	12		ABS		0x035
+REL:	.text_main	3		ABS		0x039
+REL:	.text_zma	14		ABS		0x07
 ###### CODE ######
 00 00 |00 00 |00 00 |
 00 00 |00 |00 |
 00 |00 |00 00 00 00 00 00 00 00 00 00 |
-3c 26 00 a2 05 |8c a0 21 00 |44 2a 84 16 00 |
-2c 24 82 00 00 |00 |00 |
+3c 26 00 a2 05 |8c a0 21 00 |44 2a 84 02 00 |
+2c 24 82 fc ff |00 |00 |
 00 |00 |00 |
 00 |00 |34 22 24 |
-9c a0 04 00 |9c a0 fc ff |3c 22 00 02 |
+9c a0 30 00 |9c a0 00 00 |3c 22 00 21 |
 6c 22 a0 04 00 |
