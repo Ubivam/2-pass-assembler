@@ -8,6 +8,10 @@
 #define PRINT(a) std::cout<<a<<std::endl
 #define READ(a) std::cin>>a
 
+//Sirina podatka
+#define LOW 0x0
+#define HIGH 0x1
+
 //Tipovi adresiranja
 #define IMMED 0x0
 #define REGDIR 0x1

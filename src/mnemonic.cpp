@@ -150,17 +150,17 @@ uint16_t Mnemonic::getRegisterValue(std::string reg)
 			{
 				reg = reg.substr(pos + 1, pos2 - pos - 1);
 			}
-			return uint16_t(strtoul(reg.c_str(), nullptr, 10));
+			return uint16_t(strtoul(reg.c_str(), nullptr, 16));
 		}
 		if (reg[pos] == '&')
 		{
 			reg = reg.substr(pos + 1, reg.size() - 1);
-			return uint16_t(strtoul(reg.c_str(), nullptr, 10));
+			return uint16_t(strtoul(reg.c_str(), nullptr, 16));
 		}
 		if (reg[pos] == '*')
 		{
 			reg = reg.substr(pos + 1, reg.size() - 1);
-			return uint16_t(strtoul(reg.c_str(), nullptr, 10));
+			return uint16_t(strtoul(reg.c_str(), nullptr, 16));
 		}
 		if (reg[pos] == '[' && reg[pos + 1] != 'R')
 		{
@@ -169,12 +169,12 @@ uint16_t Mnemonic::getRegisterValue(std::string reg)
 			{
 				reg = reg.substr(pos + 1, pos2 - pos - 1);
 			}
-			return uint16_t(strtoul(reg.c_str(), nullptr, 10));
+			return uint16_t(strtoul(reg.c_str(), nullptr, 16));
 		}
 	}
 	if (Utility::isNumber(reg))
 	{
-		return uint16_t(strtoul(reg.c_str(), nullptr, 10));
+		return uint16_t(strtoul(reg.c_str(), nullptr, 16));
 	}
 	return 0xFFFF;
 }
@@ -195,6 +195,11 @@ std::string Mnemonic::getRegisterSymbol(std::string reg)
 			return reg;
 		}
 		if (reg[pos] == '&')
+		{
+			reg = reg.substr(pos + 1, reg.size() - 1);
+			return reg;
+		}
+		if (reg[pos] == '$')
 		{
 			reg = reg.substr(pos + 1, reg.size() - 1);
 			return reg;
@@ -225,8 +230,9 @@ Instruction Mnemonic::constructInstruction(std::vector<std::string> inst) const
 	uint8_t byteCounter = 0;
 	bool activateOperands;
 	bool isSymbol;
-	bool is_byte_size = OperationalCodeTable::isByteSize(inst);
-	uint8_t instruction_size = Mnemonic::getInstructionSize(_modes, _modes, _code, is_byte_size, 0, _single_operand);
+	bool is_byte_size = OperationalCodeTable::isByteSize(inst[0]);
+	bool is_high = OperationalCodeTable::isLowHigh(inst[0]);
+
 	if (is_byte_size)
 	{
 		currentWord &= ~(0x1 << 2);
@@ -238,9 +244,10 @@ Instruction Mnemonic::constructInstruction(std::vector<std::string> inst) const
 	ret.push_back(currentWord);
 	byteCounter++;
 	currentWord = 0;
-	if (instruction_size == 1)
+	if (_code == 0x01 || _code == 0x18 || _code == 0x19)
+	{
 		return ret;
-
+	}
 	auto addr_mode = OperationalCodeTable::getAddressMode(inst[byteCounter]);
 
 	switch (addr_mode)
@@ -298,6 +305,7 @@ Instruction Mnemonic::constructInstruction(std::vector<std::string> inst) const
 		isSymbol = true;
 		activateOperands = false;
 		symb_str = Mnemonic::getRegisterSymbol(inst[byteCounter]);
+		currentWord |= 0x7 << 1;
 		currentWord |= REGINDPOM16 << 5;
 		break;
 	case ABS_SYM:
@@ -307,6 +315,7 @@ Instruction Mnemonic::constructInstruction(std::vector<std::string> inst) const
 		currentWord |= MEMDIR << 5;
 		break;
 	}
+	currentWord |= is_high ? HIGH : LOW;
 	ret.push_back(currentWord);
 	byteCounter++;
 	currentWord = 0;
@@ -385,31 +394,37 @@ Instruction Mnemonic::constructInstruction(std::vector<std::string> inst) const
 		switch (addr_mode)
 		{
 		case IMMED:
+			isSymbol = false;
 			activateOperands = true;
 			currentWord |= IMMED << 5;
 			break;
 		case REGIND:
+			isSymbol = false;
 			activateOperands = false;
 			currentWord |= REGIND << 5;
 			currentWord |= Mnemonic::getRegisterCode(inst[byteCounter]) << 1;
 			break;
 		case REGDIR:
+			isSymbol = false;
 			activateOperands = false;
 			currentWord |= REGDIR << 5;
 			currentWord |= Mnemonic::getRegisterCode(inst[byteCounter]) << 1;
 			//TODO: L/H
 			break;
 		case REGINDPOM:
+			isSymbol = false;
 			activateOperands = true;
 			currentWord |= REGINDPOM16 << 5;
 			currentWord |= Mnemonic::getRegisterCode(inst[byteCounter]) << 1;
 			break;
 		case REGINDPOM16:
+			isSymbol = false;
 			activateOperands = true;
 			currentWord |= REGINDPOM16 << 5;
 			currentWord |= Mnemonic::getRegisterCode(inst[byteCounter]) << 1;
 			break;
 		case MEMDIR:
+			isSymbol = false;
 			activateOperands = true;
 			currentWord |= MEMDIR << 5;
 			break;
@@ -440,6 +455,7 @@ Instruction Mnemonic::constructInstruction(std::vector<std::string> inst) const
 			currentWord |= MEMDIR << 5;
 			break;
 		}
+		currentWord |= is_high ? HIGH : LOW;
 		ret.push_back(currentWord);
 		byteCounter++;
 		currentWord = 0;

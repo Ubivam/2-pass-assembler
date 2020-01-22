@@ -1,0 +1,21 @@
+###### SECTION TABLE ######
+		INDEX	NAME	LOC		BEGIN	END
+SEG:	1	.text_adr_test	0x028	0x00	0x028
+###### SYMBOL TABLE ######
+		INDEX	NAME	SECTION		OFFSET	SCOPE
+SYM:	2		b		.text_adr_test	0x00	L
+SYM:	3		c		.text_adr_test	0x020	L
+###### RELOCATION TABLE ######
+		SECTION		INDEX	TYPE	OFFSET
+REL:	.text_adr_test	2		ABS		0x02
+REL:	.text_adr_test	3		ABS		0x06
+REL:	.text_adr_test	2		REL		0x0B
+REL:	.text_adr_test	2		ABS		0x015
+REL:	.text_adr_test	3		ABS		0x01A
+REL:	.text_adr_test	2		REL		0x01E
+REL:	.text_adr_test	2		ABS		0x022
+REL:	.text_adr_test	2		ABS		0x026
+###### CODE ######
+9c a0 00 00 |9c a0 20 00 |3c 24 80 02 00 |
+2c 22 a0 ff |2c 24 00 00 00 |2c 24 00 20 00 |
+9c 8e 02 00 |bc 00 00 00 |bc a0 00 00 |

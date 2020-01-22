@@ -20,7 +20,8 @@ public:
 
     static uint8_t getAddressMode(std::string &operation);
     static uint8_t getAddressModes(std::string operation);
-    static bool isByteSize(std::vector<std::string> &instrction);
+    static bool isByteSize(std::string operation);
+    static bool isLowHigh(std::string operation);
     static std::vector<std::string> getInstruction(std::string operation, std::vector<std::string> line);
 
     static uint8_t checkInstruction(std::string op, std::vector<std::string> line);

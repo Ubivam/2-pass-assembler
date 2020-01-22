@@ -218,7 +218,7 @@ std::regex Utility::regindpom_regex_simbol("^(r([0-9]||1[0-5])||pc||sp)\\[([a-zA
 std::regex Utility::pc_relative_regex_simbol("\\$(\\w*)");
 std::regex Utility::abs_regex_simbol("([a-zA-Z]*)");
 
-std::regex Utility::memdir_regex("\\*([0-9A-F]+||[a-zA-z][a-zA-Z0-9]*)");
+std::regex Utility::memdir_regex("\\*([0-9a-f]+||[a-zA-z][a-zA-Z0-9]*)");
 
 //Instruction Regex
-std::regex Utility::instruction_regex("(int|add|sub|mul|mov|div|cmp|and|or|not|test|xor|xcfg|call|shr|shl|halt|ret|iret|pop|push|jmp|jeq|jne|jgt)(b|w)?");
+std::regex Utility::instruction_regex("(int|add|sub|mul|mov|div|cmp|and|or|not|test|xor|xcfg|call|shr|shl|halt|ret|iret|pop|push|jmp|jeq|jne|jgt)(b|w)?(l|h)?");

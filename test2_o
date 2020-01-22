@@ -1,0 +1,10 @@
+###### SECTION TABLE ######
+		INDEX	NAME	LOC		BEGIN	END
+SEG:	1	.text_calculate	0x0C	0x00	0x0C
+###### SYMBOL TABLE ######
+		INDEX	NAME	SECTION		OFFSET	SCOPE
+###### RELOCATION TABLE ######
+		SECTION		INDEX	TYPE	OFFSET
+###### CODE ######
+28 22 62 |2c 22 62 |28 22 62 |
+28 23 63 |

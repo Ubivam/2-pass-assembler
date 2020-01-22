@@ -9,14 +9,25 @@
 
 std::unordered_map<std::string, std::shared_ptr<Mnemonic>> OperationalCodeTable::_map;
 
-bool OperationalCodeTable::find(std::string operand)
+bool OperationalCodeTable::find(std::string operation)
 {
-    return _map.find(operand) != std::end(_map);
+    std::smatch s;
+    if (std::regex_search(operation, s, Utility::instruction_regex))
+    {
+        return _map.find(s[1]) != std::end(_map);
+
+    }
+    return false;
 }
 
-std::shared_ptr<Mnemonic> OperationalCodeTable::get(std::string operand)
+std::shared_ptr<Mnemonic> OperationalCodeTable::get(std::string operation)
 {
-    return _map.find(operand)->second;
+    std::smatch s;
+    if (std::regex_search(operation, s, Utility::instruction_regex))
+    {
+        return _map.find(s[1])->second;
+    }
+    return nullptr;
 }
 
 uint8_t OperationalCodeTable::getAddressMode(std::string &operation)
@@ -61,10 +72,9 @@ uint8_t OperationalCodeTable::getAddressMode(std::string &operation)
     return 0xf; //ERROR CODE
 }
 
-bool OperationalCodeTable::isByteSize(std::vector<std::string> &instruction)
+bool OperationalCodeTable::isByteSize(std::string operation)
 {
     std::smatch s;
-    auto operation = instruction[instruction.size() - 1];
     if (std::regex_search(operation, s, Utility::instruction_regex))
     {
         auto ss = s[2];
@@ -76,6 +86,21 @@ bool OperationalCodeTable::isByteSize(std::vector<std::string> &instruction)
     return false;
 }
 
+bool OperationalCodeTable::isLowHigh(std::string operation)
+{
+    std::smatch s;
+    if (std::regex_search(operation, s, Utility::instruction_regex))
+    {
+        if (s.size() == 4) {
+            auto ss = s[3];
+            if (ss == "l")
+                return false;
+            else if (ss == "h")
+                return true;
+        }
+    }
+    return false;
+}
 uint8_t OperationalCodeTable::getAddressModes(std::string operation)
 {
     auto mnemonic = OperationalCodeTable::get(operation);
@@ -98,8 +123,14 @@ std::vector<std::string> OperationalCodeTable::getInstruction(std::string operat
 
     return instruction;
 }
-uint8_t OperationalCodeTable::checkInstruction(std::string op, std::vector<std::string> line)
+uint8_t OperationalCodeTable::checkInstruction(std::string operation, std::vector<std::string> line)
 {
+    std::smatch s;
+    if (!std::regex_search(operation, s, Utility::instruction_regex))
+    {
+        return -1;
+    }
+    std::string op = s[1];
     auto mneumonic = std::find_if(std::begin(_map), std::end(_map), [&](auto inst) { return inst.first == op; });
     auto instruction = OperationalCodeTable::getInstruction(op, line);
     if(mneumonic->second->getCode() == 0x01 || mneumonic->second->getCode() == 0x018 || mneumonic->second->getCode() == 0x019) 
@@ -113,7 +144,7 @@ uint8_t OperationalCodeTable::checkInstruction(std::string op, std::vector<std::
     }
     auto address_mode1 = OperationalCodeTable::getAddressMode(line[1]);
     auto address_mode2 = address_mode1;
-    auto is_byte_instruction = OperationalCodeTable::isByteSize(instruction);
+    auto is_byte_instruction = OperationalCodeTable::isByteSize(operation);
 
     if (address_mode1 & OperationalCodeTable::getAddressModes(op))
     {
@@ -155,7 +186,7 @@ void OperationalCodeTable::init()
     instruction = "int";
     _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x03, REGDIR, JMP_INSTRUCTION, 0, true)));
     instruction = "mov";
-    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x04, MEMDIR | REGDIR | REGINDPOM | REGINDPOM16, LOAD_STORE_INSTRUCTION)));
+    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x04, MEMDIR | REGDIR | REGINDPOM | REGINDPOM16 | PC_RELATIVE_SYM, LOAD_STORE_INSTRUCTION)));
 
     //ALU INSTRUCTIONS
     instruction = "add";
@@ -191,18 +222,18 @@ void OperationalCodeTable::init()
     //Jump Instructions
 
     instruction = "jmp";
-    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x13, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16, JMP_INSTRUCTION, 0, true)));
+    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x13, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16 | REGINDPOM_SYM | PC_RELATIVE_SYM | ABS_SYM, JMP_INSTRUCTION, 0, true)));
     instruction = "jeq";
-    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x14, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16, JMP_INSTRUCTION, 0, true)));
+    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x14, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16 | REGINDPOM_SYM | PC_RELATIVE_SYM | ABS_SYM, JMP_INSTRUCTION, 0, true)));
     instruction = "jne";
-    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x15, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16, JMP_INSTRUCTION, 0, true)));
+    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x15, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16 | REGINDPOM_SYM | PC_RELATIVE_SYM | ABS_SYM, JMP_INSTRUCTION, 0, true)));
     instruction = "jgt";
-    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x16, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16, JMP_INSTRUCTION, 0, true)));
+    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x16, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16 | REGINDPOM_SYM | PC_RELATIVE_SYM | ABS_SYM, JMP_INSTRUCTION, 0, true)));
     instruction = "call";
-    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x17, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16, JMP_INSTRUCTION, 0, true)));
+    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x17, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16 | REGINDPOM_SYM | PC_RELATIVE_SYM | ABS_SYM, JMP_INSTRUCTION, 0, true)));
     instruction = "ret";
-    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x18, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16, JMP_INSTRUCTION, 0, true)));
+    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x18, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16 | REGINDPOM_SYM | PC_RELATIVE_SYM | ABS_SYM, JMP_INSTRUCTION, 0, true)));
     instruction = "iret";
-    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x19, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16, JMP_INSTRUCTION, 0, true)));
+    _map.insert(std::make_pair<>(instruction, std::make_shared<Mnemonic>(instruction, 0x19, REGDIR | MEMDIR | REGINDPOM | REGINDPOM16 | REGINDPOM_SYM | PC_RELATIVE_SYM | ABS_SYM, JMP_INSTRUCTION, 0, true)));
     return;
 }

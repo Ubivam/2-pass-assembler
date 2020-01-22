@@ -12,6 +12,7 @@ push g
 l:
 div r5, r2[a]
 add r2, r1[l]
+addb r4, 10
 .align 16
 s:
 sub r1, r2
