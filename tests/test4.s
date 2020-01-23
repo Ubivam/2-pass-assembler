@@ -7,6 +7,7 @@
 .equ g 33
 .skip 10
 a:
+movw r6[0], 1234
 mul r3, 1442
 push g
 l:

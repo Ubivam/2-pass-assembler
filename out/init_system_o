@@ -1,10 +1,10 @@
 ###### SECTION TABLE ######
 		INDEX	NAME	LOC		BEGIN	END
 SEG:	1	.vector_table	0x08	0x00	0x08
-SEG:	7	.text_reset_handler	0x04	0x00	0x04
+SEG:	7	.text_reset_handler	0x0A	0x00	0x0A
 SEG:	9	.text_error_code_handler	0x01	0x00	0x01
-SEG:	11	.text_timer_handler	0x01	0x00	0x01
-SEG:	13	.text_terminal_handler	0x01	0x00	0x01
+SEG:	11	.text_timer_handler	0x05	0x00	0x05
+SEG:	13	.text_terminal_handler	0x0F	0x00	0x0F
 ###### SYMBOL TABLE ######
 		INDEX	NAME	SECTION		OFFSET	SCOPE
 SYM:	2		begin		.vector_table	0x00	L
@@ -12,14 +12,16 @@ SYM:	3		rst		.vector_table	0x02	L
 SYM:	4		err		.vector_table	0x04	L
 SYM:	5		tim		.vector_table	0x06	L
 SYM:	6		term		.vector_table	0x08	L
-SYM:	8		inf		.text_reset_handler	0x00	L
+SYM:	8		inf		.text_reset_handler	0x06	L
 SYM:	10		error		.text_error_code_handler	0x00	L
 SYM:	12		timer		.text_timer_handler	0x00	L
 SYM:	14		terminal		.text_terminal_handler	0x00	L
 ###### RELOCATION TABLE ######
 		SECTION		INDEX	TYPE	OFFSET
-REL:	.text_reset_handler	8		ABS		0x02
+REL:	.text_reset_handler	8		ABS		0x08
 ###### CODE ######
 00 00 |00 00 |00 00 |
-00 00 |9c a0 00 00 |0c |
-0c |0c |
+00 00 |20 a0 10 ff 00 05 |9c a0 06 00 |
+0c |2c 28 00 01 |cc |
+24 2a a0 02 ff |2c 2a 00 20 |24 a0 00 ff 2a |
+cc |

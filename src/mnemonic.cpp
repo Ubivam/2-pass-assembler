@@ -41,14 +41,7 @@ uint8_t Mnemonic::getInstructionSize(uint8_t addr_mode1, uint8_t addr_mode2, uin
 		}
 		break;
 	case MEMDIR:
-		if (is_byte_size)
-		{
-			first_op = 2;
-		}
-		else
-		{
-			first_op = 3;
-		}
+		first_op = 3;
 		break;
 	case IMMED_SYM:
 		first_op = 3;
@@ -90,14 +83,7 @@ uint8_t Mnemonic::getInstructionSize(uint8_t addr_mode1, uint8_t addr_mode2, uin
 		}
 		break;
 	case MEMDIR:
-		if (is_byte_size)
-		{
-			secound_op = 2;
-		}
-		else
-		{
-			secound_op = 3;
-		}
+		secound_op = 3;
 		break;
 	case IMMED_SYM:
 		secound_op = 3;
@@ -327,7 +313,6 @@ Instruction Mnemonic::constructInstruction(std::vector<std::string> inst) const
 		{
 			uint8_t first = (uint8_t)((value & 0xFF00) >> 8);
 			uint8_t second = (uint8_t)(value & 0x00FF);
-			byteCounter += 2;
 			ret.push_back(second);
 			ret.push_back(first);
 		}
@@ -335,7 +320,6 @@ Instruction Mnemonic::constructInstruction(std::vector<std::string> inst) const
 		{
 			uint8_t val = (uint8_t)(value & 0x00FF);
 			ret.push_back(val);
-			byteCounter++;
 		}
 	}
 	if (isSymbol)
@@ -374,7 +358,6 @@ Instruction Mnemonic::constructInstruction(std::vector<std::string> inst) const
 				}
 				uint8_t first = (uint8_t)((value & 0xFF00) >> 8);
 				uint8_t second = (uint8_t)(value & 0x00FF);
-				byteCounter += 2;
 				ret.push_back(second);
 				ret.push_back(first);
 				break;
@@ -382,7 +365,6 @@ Instruction Mnemonic::constructInstruction(std::vector<std::string> inst) const
 		}
 		if (!foundSymb)
 		{
-			byteCounter += 2;
 			uint8_t error = (uint8_t)0xFF;
 			ret.push_back(error);
 			ret.push_back(error);
